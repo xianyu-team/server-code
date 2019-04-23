@@ -31,13 +31,13 @@ def user(request):
                     user_password=parameters['user_password']
                 )
                 new_user.save()
-                return HttpResponse(json.dumps(__ok__), content_type='application/json')
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             else:
                 __error__['message'] = '该手机号已经被注册'
-                return HttpResponse(json.dumps(__error__), content_type='application/json')
+                return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
         except Exception as exc:
             print(exc)
-            return HttpResponse(json.dumps(__error__), content_type='application/json')
+            return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
     elif request.method == 'GET':
         new_user = models.User.objects.get(id=1)
         return render(request, 'user/test.html', {'user': new_user})
