@@ -12,5 +12,12 @@
         {{user.user_phone}}  
         {{user.user_password}}
     </div>
+    <div>
+        <form action="/user" method="post">
+            <input type="text" name="user_phone" id="user_phone">
+            <input type="text" name="user_password", id="user_password">
+            <input type="submit" value="提交">
+        </form>
+    </div>
 </body>
 </html>
