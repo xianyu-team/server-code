@@ -21,14 +21,24 @@ __error__ = {
 @csrf_exempt
 def user(request):
     if request.method == 'POST':
-        parameters = request.POST
-        new_user = models.User(
-            user_phone=parameters['user_phone'],
-            user_password=parameters['user_password']
-        )
-        new_user.save()
-        return HttpResponse(json.dumps(__ok__), content_type='application/json')
+        try:
+            parameters = request.POST
+            # 先检查手机号是否唯一
+            filter_user = models.User.objects.filter(user_phone=parameters['user_phone'])
+            if filter_user.__len__() == 0:
+                new_user = models.User(
+                    user_phone=parameters['user_phone'],
+                    user_password=parameters['user_password']
+                )
+                new_user.save()
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+            else:
+                __error__['message'] = '该手机号已经被注册'
+                return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+        except Exception as exc:
+            print(exc)
+            return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
     elif request.method == 'GET':
-        user = models.User.objects.get(id=1)
-        return render(request, 'user/test.html', {'user': user})
+        new_user = models.User.objects.get(id=1)
+        return render(request, 'user/test.html', {'user': new_user})
     
