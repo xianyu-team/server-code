@@ -13,7 +13,7 @@ __ok__ = {
 }
 __error__ = {
     'code': 400,
-    'message': 'ERROR'
+    'message': '服务器发生错误'
 }
 
 # 增加装饰器，跳过csrf的保护，前端请求就不会被forbidden
@@ -38,7 +38,7 @@ def user(request):
         except Exception as exc:
             print(exc)
             return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+    # 这个get请求返回templates里面的html文件，是为了在html中测试api,浏览器中打开/user即可
     elif request.method == 'GET':
         new_user = models.User.objects.get(id=1)
         return render(request, 'user/test.html', {'user': new_user})
-    

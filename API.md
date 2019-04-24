@@ -170,7 +170,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 
@@ -211,7 +211,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 ## 用户密码登录
@@ -228,8 +228,9 @@ XianYux闲余挣闲钱系统API文档
 **返回值**
 ```
 {
-    "code":       integer,     //状态码
-    "message":    "string"     //信息
+    "code":          integer,     //状态码
+    "message":       "string",    //信息
+    "user_fillln"    integer      //用户是否完善了个人信息，0为否，1为是
 }
 ```
 
@@ -238,7 +239,8 @@ XianYux闲余挣闲钱系统API文档
 ```
 {
     "code": 200,
-    "message": "OK"
+    "message": "OK",
+    "user_fillln": 0
 }
 ```
 - 400
@@ -278,7 +280,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 
@@ -296,8 +298,9 @@ XianYux闲余挣闲钱系统API文档
 **返回值**
 ```
 {
-    "code":       integer,     //状态码
-    "message":    "string"     //信息
+    "code":          integer,     //状态码
+    "message":       "string",    //信息
+    "user_fillln"    integer      //用户是否完善了个人信息，0为否，1为是
 }
 ```
 
@@ -307,6 +310,7 @@ XianYux闲余挣闲钱系统API文档
 {
     "code": 200,
     "message": "OK"
+    "user_fillln": 0
 }
 ```
 - 400
@@ -343,7 +347,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 
@@ -393,7 +397,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 
@@ -439,7 +443,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 
@@ -486,7 +490,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 
@@ -547,7 +551,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 
@@ -580,7 +584,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 
@@ -613,7 +617,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 
@@ -652,7 +656,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 
@@ -687,7 +691,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 
@@ -737,7 +741,7 @@ XianYux闲余挣闲钱系统API文档
 - 400
 ```
     "code": 400,
-    "message": "ERROR"
+    "message": "服务器发生错误"
 ```
 
 
