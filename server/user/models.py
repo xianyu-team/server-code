@@ -9,4 +9,5 @@ class User(models.Model):
     user_password = models.CharField(max_length=20)
     user_icon = models.BinaryField(default=None, null=True)
     user_balance = models.FloatField(default=0.0)
+    user_fillln = models.SmallIntegerField(default=0)
     
