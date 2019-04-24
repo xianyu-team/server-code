@@ -9,5 +9,4 @@ class User(models.Model):
     user_password = models.CharField(max_length=20)
     user_icon = models.BinaryField(default=None, null=True)
     user_balance = models.FloatField(default=0.0)
-    user_nearLogin = models.SmallIntegerField(default=0)    #0代表最近7天没登陆，1为最近7天有登录
     
