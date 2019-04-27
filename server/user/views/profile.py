@@ -36,7 +36,7 @@ def profile(request):
                     student.student_university = request.POST['student_university']
                     student.student_academy = request.POST['student_academy']
                     student.student_number = request.POST['student_number']
-                    student.student_sex = request.POST['student_sex']
+                    student.student_gender = request.POST['student_gender']
                     student.save()
                 else:
                     filter_student.user_id = request.session.get('user_id')
@@ -44,7 +44,7 @@ def profile(request):
                     filter_student.student_university = request.POST['student_university']
                     filter_student.student_academy = request.POST['student_academy']
                     filter_student.student_number = request.POST['student_number']
-                    filter_student.student_sex = request.POST['student_sex']
+                    filter_student.student_gender = request.POST['student_gender']
                     filter_student.save()
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
                 
@@ -63,7 +63,7 @@ def profile(request):
                 student_university = filter_student.student_university
                 student_academy = filter_student.student_academy
                 student_number = filter_student.student_number
-                student_sex = filter_student.student_sex
+                student_gender = filter_student.student_gender
 
                 __rep__ = {
                     'code': 200,
@@ -74,7 +74,7 @@ def profile(request):
                     "student_university": filter_student.student_university, 
                     "student_academy": filter_student.student_academy,   
                     "student_number": filter_student.student_number,  
-                    "student_sex": filter_student.student_sex
+                    "student_gender": filter_student.student_gender
                 }
                 return HttpResponse(json.dumps(__rep__), content_type='application/json', charset='utf-8')
 
