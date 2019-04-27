@@ -9,5 +9,7 @@ urlpatterns = [
     path('/session', user.user_session),
     path('/password', user.user_password),
     path('/password/session', user.user_password_session),
-    path('/order', user.user_order)
+    path('/order', user.user_orders),
+    path('/followings', user.user_followings),
+    path('/fans', user.user_fans),
 ]

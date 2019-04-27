@@ -19,7 +19,7 @@ class Student(models.Model):
     student_name = models.CharField(max_length=20)
     student_university = models.CharField(max_length=50) 
     student_academy = models.CharField(max_length=50)
-    student_sex = models.SmallIntegerField(default=0)
+    student_gender = models.SmallIntegerField(default=0)
 
 
 #订单
@@ -44,3 +44,15 @@ class PublishOrder(models.Model):
 class PickOrder(models.Model):
     user_id = models.ForeignKey('User',on_delete=models.CASCADE)
     order_id = models.ForeignKey('Order',on_delete=models.CASCADE)
+
+
+#用户关注对象
+class Followings(models.Model):
+    user_id = models.ForeignKey('User',on_delete=models.CASCADE)
+    folloings_id = models.IntegerField()
+
+
+#关注用户对象
+class Fans(models.Model):
+    user_id = models.ForeignKey('User',on_delete=models.CASCADE)
+    fans_id = models.IntegerField()

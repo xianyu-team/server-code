@@ -64,11 +64,11 @@ def user_password_session(request):
 @csrf_exempt
 def user_password(request):
     if request.session.get('login', none):
-        if request.method == 'POST':
+        if request.method == 'PUT':
             try:
                 filter_user = User.objects.get(id = request.session.get('user_id'))
-                filter_user.user_phone = request.POST.user_phone
-                filter_user.user_password = request.POST.user_password
+                filter_user.user_phone = request.PUT.user_phone
+                filter_user.user_password = request.PUT.user_password
                 filter_user.save()
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
@@ -95,24 +95,83 @@ def user_session(request):
 
 
 @csrf_exempt
-def user_order(request):
+def user_orders(request):
     if request.session.get('login', none):
         if request.method == 'GET':
-            if request.GET.type == 0:
-                filter_publishOrder = PublishOrder.objects.get(id = request.session.get('user_id'))
-                order = []
-                for i in filter_publishOrder:
-                    filter_order = Order.objects.get(id = request.session.get('i.order_id'))
-                    order.append(filter_order)
-                __ok__['order'] = order
+            try:
+                if request.GET.type == 0:
+                    filter_publishOrder = PublishOrder.objects.get(id = request.session.get('user_id'))
+                    orders = []
+                    for i in filter_publishOrder:
+                        filter_order = Order.objects.get(id = i.order_id)
+                        orders.append(filter_order)
+                    __ok__['order'] = orders
+                    return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+                elif request.GET.type == 1:
+                    filter_pickOrder = PickOrder.objects.get(id = request.session.get('user_id'))
+                    orders = []
+                    for i in filter_pickOrder:
+                        filter_order = Order.objects.get(id = i.order_id)
+                        orders.append(filter_order)
+                    __ok__['orders'] = orders
+                    return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+            except Exception as exc:
+                print(exc)
+                return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')        
+    else: 
+        return HttpResponse(json.dumps(notLogin), content_type='application/json', charset='utf-8')
+
+
+
+@csrf_exempt
+def user_followings(request):
+    if request.session.get('login', none):
+        if request.method == 'GET':
+            try:
+                filter_followings = Followings.objects.get(id = request.session.get('user_id'))
+                followings = []
+                for i in filter_followings:
+                    user = {}
+                    filter_user = User.objects.get(id = i.user_id)
+                    user.icon = filter_user.icon 
+                    filter_student = Student.objects.get(id = i.user_id)
+                    user.user_name = filter_student.student_name
+                    user.user_school = filter_student.student_university
+                    user.user_academy = filter_student.student_academy
+                    user.user_number = filter_student.student_number
+                    user.user_gender = filter_student.student_gender
+                    followings.append(user)
+                __ok__['followings'] = followings
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
-            elif request.GET.type == 1:
-                filter_pickOrder = PickOrder.objects.get(id = request.session.get('user_id'))
-                order = []
-                for i in filter_pickOrder:
-                    filter_order = Order.objects.get(id = request.session.get('i.order_id'))
-                    order.append(filter_order)
-                __ok__['order'] = order
+            except Exception as exc:
+                print(exc)
+                return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')    
+    else: 
+        return HttpResponse(json.dumps(notLogin), content_type='application/json', charset='utf-8')
+
+
+@csrf_exempt
+def user_fans(request):
+    if request.session.get('login', none):
+        if request.method == 'GET':
+            try:
+                filter_fans = Fans.objects.get(id = request.session.get('user_id'))
+                fans = []
+                for i in filter_fans:
+                    user = {}
+                    filter_user = User.objects.get(id = i.user_id)
+                    user.icon = filter_user.icon 
+                    filter_student = Student.objects.get(id = i.user_id)
+                    user.user_name = filter_student.student_name
+                    user.user_school = filter_student.student_university
+                    user.user_academy = filter_student.student_academy
+                    user.user_number = filter_student.student_number
+                    user.user_gender = filter_student.student_gender
+                    fans.append(user)
+                __ok__['fans'] = fans
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+            except Exception as exc:
+                print(exc)
+                return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')   
     else: 
         return HttpResponse(json.dumps(notLogin), content_type='application/json', charset='utf-8')

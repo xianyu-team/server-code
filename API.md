@@ -292,7 +292,7 @@ XianYux闲余挣闲钱系统API文档
 
 ## 找回密码-重置密码
 
-> `POST /user/password`
+> `PUT /user/password`
 
 **参数**
 ```
@@ -411,9 +411,9 @@ XianYux闲余挣闲钱系统API文档
 
 ## 获得当前用户发布/领取的订单列表
 
-> `GET /user/order`
+> `GET /user/orders`
 
-**参数**
+**参数**	
 
 ```
 {
@@ -422,6 +422,7 @@ XianYux闲余挣闲钱系统API文档
 ```
 
 **返回值**
+
 ```
 {
     "code":       integer,     //状态码
@@ -449,7 +450,7 @@ XianYux闲余挣闲钱系统API文档
 {
     "code": 200,
     "message": "OK"
-    "order": [
+    "orders": [
         {
             //省略...
         }
@@ -490,7 +491,7 @@ XianYux闲余挣闲钱系统API文档
         {
             "user_icon":       string,    //头像，图片的byte数组转成字符串
             "user_name":       string,    //真实姓名
-            "user_school":     string,    //学校
+            "user_university": string,    //学校
             "user_academy":    string,    //学院
             "user_number":     string,    //学号
             "user_gender":     int        //性别，0为女，1为男
@@ -516,6 +517,13 @@ XianYux闲余挣闲钱系统API文档
 ```
     "code": 400,
     "message": "服务器发生错误"
+```
+
+- 401
+
+```
+    "code": 401,
+    "message": "未登录"
 ```
 
 
@@ -564,6 +572,14 @@ XianYux闲余挣闲钱系统API文档
     "code": 400,
     "message": "服务器发生错误"
 ```
+
+- 401
+
+```
+    "code": 401,
+    "message": "未登录"
+```
+
 
 
 # 任务
