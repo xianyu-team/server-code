@@ -24,7 +24,7 @@ def profile(request):
         if request.method == 'POST':
             try:
                 #更新头像
-                filter_user = User.objects.get(id = request.session.get('user_id'))
+                filter_user = User.objects.filter(id = request.session.get('user_id'))
                 filter_user.user_icon = request.POST.user_icon
                 filter_user.save()
 
@@ -54,7 +54,7 @@ def profile(request):
 
         elif request.method == 'GET':
             try:
-                filter_user = User.objects.get(id = request.session.get('user_id'))
+                filter_user = User.objects.filter(id = request.session.get('user_id'))
                 user_phone = filter_user.user_phone
                 user_icon = filter_user.user_icon
 
