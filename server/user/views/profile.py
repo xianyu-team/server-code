@@ -1,0 +1,85 @@
+from django.http.response import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+from user import models
+
+__ok__ = {
+    'code': 200,
+    'message': 'OK'
+}
+__error__ = {
+    'code': 400,
+    'message': '服务器发生错误'
+}
+
+_notLogin_ = {
+    'code': 401,
+    'message': '未登录'
+}
+
+@csrf_exempt
+def profile(request):
+    if request.session.get('login', none):
+        if request.method == 'POST':
+            try:
+                #更新头像
+                filter_user = User.objects.get(id = request.session.get('user_id'))
+                filter_user.user_icon = request.POST.user_icon
+                filter_user.save()
+
+                # 若学生信息存在则更新, 不存在则创建
+                filter_student = Student.objects.filter(user_id = request.session.get('user_id'))
+                if filter_user.__len__() == 0:
+                    student = Student()
+                    student.student_name = request.POST['student_name'],
+                    student.student_university = request.POST['student_university']
+                    student.student_academy = request.POST['student_academy']
+                    student.student_number = request.POST['student_number']
+                    student.student_sex = request.POST['student_sex']
+                    student.save()
+                else:
+                    filter_student.user_id = request.session.get('user_id')
+                    filter_student.student_name = request.POST['student_name'],
+                    filter_student.student_university = request.POST['student_university']
+                    filter_student.student_academy = request.POST['student_academy']
+                    filter_student.student_number = request.POST['student_number']
+                    filter_student.student_sex = request.POST['student_sex']
+                    filter_student.save()
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+                
+            except Exception as exc:
+                print(exc)
+                return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+
+        elif request.method == 'GET':
+            try:
+                filter_user = User.objects.get(id = request.session.get('user_id'))
+                user_phone = filter_user.user_phone
+                user_icon = filter_user.user_icon
+
+                filter_student = Student.objects.filter(user_id = request.session.get('user_id'))
+                student_name = filter_student.student_name
+                student_university = filter_student.student_university
+                student_academy = filter_student.student_academy
+                student_number = filter_student.student_number
+                student_sex = filter_student.student_sex
+
+                __rep__ = {
+                    'code': 200,
+                    "message": "OK",
+                    "user_phone": filter_user.user_phone,
+                    "user_icon": filter_user.user_icon,   
+                    "student_name": filter_student.student_name, 
+                    "student_university": filter_student.student_university, 
+                    "student_academy": filter_student.student_academy,   
+                    "student_number": filter_student.student_number,  
+                    "student_sex": filter_student.student_sex
+                }
+                return HttpResponse(json.dumps(__rep__), content_type='application/json', charset='utf-8')
+
+            except Exception as exc:
+                print(exc)
+                return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+    else: 
+        return HttpResponse(json.dumps(notLogin), content_type='application/json', charset='utf-8')
