@@ -4,6 +4,7 @@ from django.http.response import HttpResponse
 import json
 
 from user import models
+from order import models
 
 # Create your views here.
 
@@ -29,9 +30,9 @@ def user(request):
         try:
             parameters = request.POST
             # 先检查手机号是否唯一
-            filter_user = models.User.objects.filter(user_phone=parameters['user_phone'])
+            filter_user = User.objects.filter(user_phone=parameters['user_phone'])
             if filter_user.__len__() == 0:
-                new_user = models.User(
+                new_user = User(
                     user_phone=parameters['user_phone'],
                     user_password=parameters['user_password']
                 )
@@ -49,7 +50,7 @@ def user(request):
 def user_password_session(request):
     if request.session.get('login', none):
         if request.method == 'POST':
-            filter_user = User.objects.get(user_phone=request.POST.user_phone)
+            filter_user = User.objects.filter(user_phone=request.POST.user_phone)
             if filter_user.user_password == request.POST.user_password:
                 request.session['user_id'] = filter_user.id 
                 request.session['user_login'] = true
@@ -66,7 +67,7 @@ def user_password(request):
     if request.session.get('login', none):
         if request.method == 'PUT':
             try:
-                filter_user = User.objects.get(id = request.session.get('user_id'))
+                filter_user = User.objects.filter(id = request.session.get('user_id'))
                 filter_user.user_phone = request.PUT.user_phone
                 filter_user.user_password = request.PUT.user_password
                 filter_user.save()
@@ -100,18 +101,18 @@ def user_orders(request):
         if request.method == 'GET':
             try:
                 if request.GET.type == 0:
-                    filter_publishOrder = PublishOrder.objects.get(id = request.session.get('user_id'))
+                    filter_publishOrder = PublishOrder.objects.filter(id = request.session.get('user_id'))
                     orders = []
                     for i in filter_publishOrder:
-                        filter_order = Order.objects.get(id = i.order_id)
+                        filter_order = Order.objects.filter(id = i.order_id)
                         orders.append(filter_order)
                     __ok__['order'] = orders
                     return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
                 elif request.GET.type == 1:
-                    filter_pickOrder = PickOrder.objects.get(id = request.session.get('user_id'))
+                    filter_pickOrder = PickOrder.objects.filter(id = request.session.get('user_id'))
                     orders = []
                     for i in filter_pickOrder:
-                        filter_order = Order.objects.get(id = i.order_id)
+                        filter_order = Order.objects.filter(id = i.order_id)
                         orders.append(filter_order)
                     __ok__['orders'] = orders
                     return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
@@ -128,19 +129,10 @@ def user_followings(request):
     if request.session.get('login', none):
         if request.method == 'GET':
             try:
-                filter_followings = Followings.objects.get(id = request.session.get('user_id'))
+                filter_followings = Followings.objects.filter(id = request.session.get('user_id'))
                 followings = []
                 for i in filter_followings:
-                    user = {}
-                    filter_user = User.objects.get(id = i.user_id)
-                    user.icon = filter_user.icon 
-                    filter_student = Student.objects.get(id = i.user_id)
-                    user.user_name = filter_student.student_name
-                    user.user_school = filter_student.student_university
-                    user.user_academy = filter_student.student_academy
-                    user.user_number = filter_student.student_number
-                    user.user_gender = filter_student.student_gender
-                    followings.append(user)
+                    followings.append(i.folloings_id)
                 __ok__['followings'] = followings
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
@@ -155,23 +147,42 @@ def user_fans(request):
     if request.session.get('login', none):
         if request.method == 'GET':
             try:
-                filter_fans = Fans.objects.get(id = request.session.get('user_id'))
+                filter_fans = Fans.objects.filter(id = request.session.get('user_id'))
                 fans = []
                 for i in filter_fans:
-                    user = {}
-                    filter_user = User.objects.get(id = i.user_id)
-                    user.icon = filter_user.icon 
-                    filter_student = Student.objects.get(id = i.user_id)
-                    user.user_name = filter_student.student_name
-                    user.user_school = filter_student.student_university
-                    user.user_academy = filter_student.student_academy
-                    user.user_number = filter_student.student_number
-                    user.user_gender = filter_student.student_gender
-                    fans.append(user)
+                    fans.append(i.fans_id)
                 __ok__['fans'] = fans
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
                 return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')   
+    else: 
+        return HttpResponse(json.dumps(notLogin), content_type='application/json', charset='utf-8')
+
+
+
+
+@csrf_exempt
+def user_information(request):
+    if request.session.get('login', none):
+        if request.method == 'GET':
+            try:
+                users = []
+                for i in request.GET.user_ids:
+                    user = {}
+                    filter_user = User.objects.filter(id = i)
+                    user.icon = filter_user.icon 
+                    filter_student = Student.objects.filter(id = i)
+                    user.user_name = filter_student.student_name
+                    user.user_school = filter_student.student_university
+                    user.user_academy = filter_student.student_academy
+                    user.user_number = filter_student.student_number
+                    user.user_gender = filter_student.student_gender
+                    users.append(user)
+                __ok__['users'] = users
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')                
+            except Exception as exc:
+                print(exc)
+                return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8') 
     else: 
         return HttpResponse(json.dumps(notLogin), content_type='application/json', charset='utf-8')
