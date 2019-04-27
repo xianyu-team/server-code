@@ -31,6 +31,15 @@ XianYux闲余挣闲钱系统API文档
 - IP : 120.77.146.251
 - Port : 8000
 
+
+
+# Session
+
+* 用户id: request.session['user_id']
+* 登录状态: request.session['login']
+
+
+
 # 用户
 
 ## 获取手机验证码
@@ -44,6 +53,7 @@ XianYux闲余挣闲钱系统API文档
 ```
 
 **返回值**
+
 ```
 {
     "code":                 integer,     //状态码
@@ -106,6 +116,7 @@ XianYux闲余挣闲钱系统API文档
 > `POST /user`
 
 **参数**
+
 ```
 {
     "user_phone":       "string",    //手机号
@@ -173,8 +184,17 @@ XianYux闲余挣闲钱系统API文档
     "message": "服务器发生错误"
 ```
 
+* 401
+
+```
+    "code": 401,
+    "message": "未登录"
+```
+
+
 
 ## 获取个人信息
+
 > `GET /user/profile`
 
 **参数**
@@ -200,13 +220,15 @@ XianYux闲余挣闲钱系统API文档
 **返回示例**
 - 200
 ```
-    "user_phone": "15988991556"
+	"code": 200,
+	"message": "OK,
+    "user_phone": "15988991556",
     "user_icon": "x\86\45...",    
     "student_name": "张三",   
     "student_university": "中山大学", 
     "student_academy": "数据科学与计算机学院",    
     "student_number": "16330033",   
-    "student_sex": 0 
+    "student_sex": 0
 ```
 - 400
 ```
@@ -214,10 +236,19 @@ XianYux闲余挣闲钱系统API文档
     "message": "服务器发生错误"
 ```
 
+- 401
+
+```
+    "code": 401,
+    "message": "未登录"
+```
+
 ## 用户密码登录
+
 > `POST /user/password/session`
 
 **参数**
+
 ```
 {
     "user_phone":       "string",    //手机号
@@ -226,6 +257,7 @@ XianYux闲余挣闲钱系统API文档
 ```
 
 **返回值**
+
 ```
 {
     "code":          integer,     //状态码
@@ -249,9 +281,18 @@ XianYux闲余挣闲钱系统API文档
     "message": "用户名或密码错误"
 ```
 
+- 401
+
+```
+    "code": 401,
+    "message": "未登录"
+```
+
+## 
 
 ## 找回密码-重置密码
-> `PUT /user/password`
+
+> `POST /user/password`
 
 **参数**
 ```
@@ -283,8 +324,17 @@ XianYux闲余挣闲钱系统API文档
     "message": "服务器发生错误"
 ```
 
+- 401
+
+```
+    "code": 401,
+    "message": "未登录"
+```
+
+
 
 ## 用户短信登录
+
 > `POST /user/phone_verification/session`
 
 **参数**
@@ -350,11 +400,21 @@ XianYux闲余挣闲钱系统API文档
     "message": "服务器发生错误"
 ```
 
+- 401
 
-## 获得当前用户发布\领取的任务列表
+```
+    "code": 401,
+    "message": "未登录"
+```
+
+
+
+## 获得当前用户发布/领取的订单列表
+
 > `GET /user/order`
 
 **参数**
+
 ```
 {
     "type":    integer    //0为当前用户发布的，1为领取的
@@ -366,22 +426,24 @@ XianYux闲余挣闲钱系统API文档
 {
     "code":       integer,     //状态码
     "message":    "string",    //信息
-    "order": [
+    "orders": [
         {
-            "order_id":                int,        //订单ID(主键)
+            "id":                	   int,        //订单ID(主键)
             "order_type":              string,     //订单类型
             "order_bonus":             integer,    //悬赏金额
-            "order_published_date":    string,     //发布时间  
+            "order_detail":			   string,	   //订单细节
+            "order_publishDate":       string,     //发布时间  
             "order_description":       string,     //订单描述      
-            "order_accepted":          bool,       //是否接受
-            "order_finished":          bool,       //是否完成
-            "order_finished_date":     string,     //完成时间  
+            "order_picked":            bool,       //是否接受
+            "order_complished":        bool,       //是否完成
+            "order_complishDate":      string,     //完成时间  
         }
     ]
 }
 ```
 
 **返回示例**
+
 - 200
 ```
 {
@@ -400,8 +462,17 @@ XianYux闲余挣闲钱系统API文档
     "message": "服务器发生错误"
 ```
 
+- 401
+
+```
+    "code": 401,
+    "message": "未登录"
+```
+
+
 
 ## 获取当前用户的关注列表
+
 > `GET /user/followings`
 
 **参数**
@@ -410,11 +481,12 @@ XianYux闲余挣闲钱系统API文档
 ```
 
 **返回值**
+
 ```
 {
     "code":       integer,     //状态码
     "message":    "string",    //信息
-    "user": [
+    "followings": [
         {
             "user_icon":       string,    //头像，图片的byte数组转成字符串
             "user_name":       string,    //真实姓名
@@ -461,7 +533,7 @@ XianYux闲余挣闲钱系统API文档
 {
     "code":       integer,     //状态码
     "message":    "string",    //信息
-    "user": [
+    "fans": [
         {
             "user_icon":       string,    //头像，图片的byte数组转成字符串
             "user_name":       string,    //真实姓名
