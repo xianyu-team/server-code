@@ -158,7 +158,7 @@ XianYux闲余挣闲钱系统API文档
     "student_university":     string,    //学校
     "student_academy":        string,    //学院
     "student_number":         string,    //学号
-    "student_sex":            integer    //性别，0为女，1为男
+    "student_gender":         integer    //性别，0为女，1为男
 }
 ```
 
@@ -213,7 +213,7 @@ XianYux闲余挣闲钱系统API文档
     "student_university":     string,    //学校
     "student_academy":        string,    //学院
     "student_number":         string,    //学号
-    "student_sex":            integer    //性别，0为女，1为男
+    "student_gender":         integer    //性别，0为女，1为男
 }
 ```
 
