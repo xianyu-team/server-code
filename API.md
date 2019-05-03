@@ -480,7 +480,7 @@ XianYux闲余挣闲钱系统API文档
 {
     "code":                    integer,    
     "message":                 string,
-    "task": {
+    "tasks": {
         "task_id":             integer,    //任务id
         "user_id":             integer,    //发布者id
         "task_type":           integer,    //任务类型，0为拿快递和外卖，1为填问卷
@@ -498,7 +498,7 @@ XianYux闲余挣闲钱系统API文档
 {
     "code":                    integer,    
     "message":                 string,
-    "task": {
+    "tasks": {
         //省略...
     }
 }
@@ -748,7 +748,7 @@ XianYux闲余挣闲钱系统API文档
     "message":                    string,     //信息
     "tasks": [    
         {
-            "id":            	  integer,    //任务ID(主键)
+            "task_id":            integer,    //任务ID(主键)
             "user_id":            integer,    //发布者id	
             "task_type":          string,     //任务类型，0为拿快递和外卖，1为问卷
             "task_sketch":        string,     //任务简介
@@ -805,7 +805,7 @@ XianYux闲余挣闲钱系统API文档
     "code":                        integer,    //状态码
     "message":                     string,     //信息
     "delivery": {
-        "id":             		   integer,    //递送任务id
+        "delivery_id":             integer,    //递送任务id
         "task_id":                 integer,    //递送任务对应的任务id
         "delivery_detail":         string,     //订单类型，0为拿快递和外卖，1为问卷
         "delivery_picked":         string,     //任务简介
@@ -862,13 +862,13 @@ XianYux闲余挣闲钱系统API文档
     "code":                                integer,    //状态码
     "message":                             string,     //信息
     "questionnaire": {
-        "id":                			   integer,    //问卷id
+        "questionnaire_id":                integer,    //问卷id
         "task_id":                         integer,    //问卷对应的任务id
         "questionnaire_closed":            integer,    //是否截止
         "questionnaire_deadline":          string,     //截止时间，#格式为YYYY-MM-DD HH:MM:SS
         "questions": [
             {
-                "id":             		   integer,    //题目id
+                "question_id":             integer,    //题目id
                 "questionnaire_id":        integer,    //题目所属的问卷id
                 "question_description":    string,     //题目描述
                 "question_type":           integer,    //题目类型，0为单选，1为多选，2为填空题
@@ -1237,7 +1237,7 @@ XianYux闲余挣闲钱系统API文档
     "answerSheet": [
         {
             "question": {
-                "id":             		   integer,    //题目id
+                "question_id":             integer,    //题目id
                 "questionnaire_id":        integer,    //问卷id
                 "question_description":    string,     //问题描述
                 "question_type":           integer,    //问题类型,0为单选，1为多选，2为填空
@@ -1247,7 +1247,7 @@ XianYux闲余挣闲钱系统API文档
                 "question_d":              string,
             }
             "answer": {
-                "id":               	   integer,    //答案id
+                "answer_id":               integer,    //答案id
                 "answerSheet_id":          integer,    //答卷id
                 "question_id":             integer,    //问题id
                 "answer_content":          string      //答案，单选示例"A",多选示例"ABD",填空示例"watchcat2k"
@@ -1299,7 +1299,7 @@ XianYux闲余挣闲钱系统API文档
     "statistics": [
         {
             question: {
-                "id":                  			integer,    //题目id
+                "question_id":                  integer,    //题目id
                 "questionnaire_id":             integer,    //问卷id
                 "question_description":         string,     //问题描述
                 "question_type":                integer,    //问题类型,0为单选，1为多选，2为填空
@@ -1309,7 +1309,7 @@ XianYux闲余挣闲钱系统API文档
                 "question_d":                   string,
             }
             "answer": {
-            	"id":                  			integer,    //答案id
+            	"answer_id":                  	integer,    //答案id
                 "answer_a_count":               integer,    //选A的数量
                 "answer_b_count":               integer,  
                 "answer_c_count":               integer,  
@@ -1410,7 +1410,7 @@ XianYux闲余挣闲钱系统API文档
     "message":                      string,     //信息
     "bills": [
         {
-            "id":              		integer,    //账单id
+            "bill_id":              integer,    //账单id
             "user_id":              integer,    //账单所属用户id
             "bill_type":            integer,    //0为收入，1为支出
             "bill_number":          integer,    //账单金额
