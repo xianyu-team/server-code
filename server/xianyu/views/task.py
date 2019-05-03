@@ -29,12 +29,7 @@ def task(request):
                 #最新任务
                 if request.GET.type == 0:       
                     filter_tasks = models.Task.objects.all().order_by('-task_publishDate')
-                    tasks = []
-                    #将id改为task_id
-                    for i in filter_tasks:
-                        i['task_id'] = i['id']
-                        tasks.append(i)
-                    __ok__['tasks'] = tasks
+                    __ok__['tasks'] = filter_tasks
                     return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
 
                 #关注的用户发布的任务
@@ -52,12 +47,7 @@ def task(request):
                 #金额最高的任务
                 elif request.GET.type == 2:     
                     filter_tasks = models.Task.objects.all().order_by('-task_bonus')
-                    tasks = []
-                    #将id改为task_id
-                    for i in filter_tasks:
-                        i['task_id'] = i['id']
-                        tasks.append(i)
-                    __ok__['tasks'] = tasks
+                    __ok__['tasks'] = filter_tasks
                     return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -72,7 +62,6 @@ def task_delivery_detail(request):
         if request.method == 'GET':
             try:
                 filter_delivery = models.Delivery.objects.filter(task_id = request.GET.task_id)
-                filter_delivery['delivery_id'] = filter_delivery['id']
                 __ok__['delivery'] = filter_delivery
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
@@ -88,15 +77,10 @@ def task_questionnaire_detail(request):
         if request.method == 'GET':
             try:
                 filter_questionnaire = models.Questionnaire.objects.filter(task_id = request.GET.task_id)
-                filter_questionnaire['questionnaire_id'] = filter_questionnaire['id']
 
                 filter_questions = models.Question.objects.filter(questionnaire_id = filter_questionnaire.questionnaire_id)
-                questions = []
-                for i in filter_questions:
-                    i['question_id'] = i['id']
-                    questions.append(i)
-
-                filter_questionnaire['questions'] = questions
+                
+                filter_questionnaire['questions'] = filter_questions
                 __ok__['questionnaire'] = filter_questionnaire
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
@@ -442,6 +426,44 @@ def task_questionnaire_Statistics(request):
                     statistics.append(ele)
 
                 __ok__['statistics'] = statistics
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+            except Exception as exc:
+                print(exc)
+                return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+    else: 
+        return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
+
+
+
+@csrf_exempt
+def task_questionnaire_closure(request):
+    if request.session.get('login', None) == True:
+        if request.method == 'PUT':
+            try:
+                #问卷截止
+                get_questionnaire = models.Questionnaire.objects.get(id = request.PUT.questionnaire_id)
+                get_questionnaire.questionnaire_closed = 1
+                get_questionnaire.questionnaire_deadline = strftime('%Y-%m-%d %H:%M:%S',localtime())
+                get_questionnaire.save()
+
+                #若问卷还有多余的
+                filter_questionnaire = models.Questionnaire.objects.filter(id = request.PUT.questionnaire_id)
+                if filter_questionnaire.questionnaire_number > 0:
+                    #将钱退给发布者
+                    filter_task = models.Task.objects.filter(id = filter_questionnaire.task_id)
+
+                    get_user = models.User.objects.get(id = request.session.get('user_id'))
+                    get_user.user_balance += filter_questionnaire.questionnaire_number * filter_task.task_bonus
+                    get_user.save()
+
+                    #添加账单
+                    bill = models.Bill()
+                    bill.user_id = request.session.get('user_id')
+                    bill.bill_type = 0
+                    bill.bill_number = filter_task.task_bonus
+                    bill.bill_description = '多余问卷退回: ' + filter_task.task_sketch
+                    bill.save()
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)

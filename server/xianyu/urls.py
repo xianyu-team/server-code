@@ -1,6 +1,7 @@
 from django.urls import path, include
 
 from .views import task
+from .views import bill
 
 urlpatterns = [
     path('/task', task.task),
@@ -12,4 +13,7 @@ urlpatterns = [
     path('/task/questionnaire/answer', task.task_questionnaire_answer),
     path('/task/questionnaire/answerSheet', task.task_questionnaire_answerSheet),
     path('/task/questionnaire/Statistics', task.task_questionnaire_Statistics),
+    path('/task/questionnaire/closure', task.task_questionnaire_closure),
+
+    path('/bill', bill.bill),
 ]
