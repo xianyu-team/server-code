@@ -3,6 +3,7 @@ from django.db import models
 
 #用户
 class User(models.Model):
+    user_id = models.IntegerField(primary_key=True)
     user_phone = models.CharField(max_length=11)
     user_password = models.CharField(max_length=20)
     user_icon = models.BinaryField(default=None, null=True)
@@ -12,6 +13,7 @@ class User(models.Model):
 
 #学生
 class Student(models.Model):
+    student_id = models.IntegerField(primary_key=True)
     user_id = models.ForeignKey('User',on_delete=models.CASCADE)
     student_number = models.IntegerField()
     student_name = models.CharField(max_length=20)
@@ -34,6 +36,7 @@ class Following(models.Model):
 
 #开支帐单
 class Bill(models.Model):
+    bill_id = models.IntegerField(primary_key=True)
     user_id = models.ForeignKey('User',on_delete=models.CASCADE)
     bill_type = models.SmallIntegerField(default=0)     #0代表收入, 1代表支出
     bill_number = models.IntegerField(default=0)
@@ -55,6 +58,7 @@ class PickTask(models.Model):
 
 #任务
 class Task(models.Model):
+    task_id = models.IntegerField(primary_key=True)
     user_id = models.ForeignKey('User',on_delete=models.CASCADE)
     task_type = models.SmallIntegerField(default=0)    #0代表递送, 1代表问卷
     task_sketch = models.CharField(max_length=100)
@@ -64,6 +68,7 @@ class Task(models.Model):
 
 #递送
 class Delivery(models.Model):
+    delivery_id = models.IntegerField(primary_key=True)
     task_id = models.ForeignKey('Task',on_delete=models.CASCADE)
     delivery_detail = models.CharField(max_length=100)
     delivery_picked = models.SmallIntegerField(default=0)    #0代表未接取, 1代表接取
@@ -73,6 +78,7 @@ class Delivery(models.Model):
 
 #问卷
 class Questionnaire(models.Model):
+    questionnaire_id = models.IntegerField(primary_key=True)
     task_id = models.ForeignKey('Task',on_delete=models.CASCADE)
     questionnaire_closed = models.SmallIntegerField(default=0)      #0代表未截止, 1代表截止
     questionnaire_deadline = models.DateTimeField()                 #格式为YYYY-MM-DD HH:MM:SS
@@ -81,6 +87,7 @@ class Questionnaire(models.Model):
 
 #题目
 class Question(models.Model):
+    question_id = models.IntegerField(primary_key=True)
     questionnaire_id = models.ForeignKey('Questionnaire',on_delete=models.CASCADE)
     question_description = models.CharField(max_length=100)
     question_type = models.SmallIntegerField(default=0)     #0代表单选, 1代表多选, 2代表填空
@@ -92,12 +99,14 @@ class Question(models.Model):
 
 #答卷
 class AnswerSheet(models.Model):
+    answerSheet_id = models.IntegerField(primary_key=True)
     questionnaire_id = models.ForeignKey('Questionnaire',on_delete=models.CASCADE)
     user_id = models.ForeignKey('User',on_delete=models.CASCADE)
 
 
 #答案
 class Answer(models.Model):
+    answer_id = models.IntegerField(primary_key=True)
     answerSheet_id = models.ForeignKey('AnswerSheet',on_delete=models.CASCADE)
     question_id = models.ForeignKey('Question',on_delete=models.CASCADE)
     answer_content = models.CharField(max_length=100)
