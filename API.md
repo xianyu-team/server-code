@@ -17,7 +17,7 @@ XianYux闲余挣闲钱系统API文档
   - [用户退出登录](#%E7%94%A8%E6%88%B7%E9%80%80%E5%87%BA%E7%99%BB%E5%BD%95)
   - [获取当前用户的余额](#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E7%9A%84%E4%BD%99%E9%A2%9D)
   - [获得当前用户发布/领取的所有任务id和共同属性](#%E8%8E%B7%E5%BE%97%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8F%91%E5%B8%83%E9%A2%86%E5%8F%96%E7%9A%84%E6%89%80%E6%9C%89%E4%BB%BB%E5%8A%A1id%E5%92%8C%E5%85%B1%E5%90%8C%E5%B1%9E%E6%80%A7)
-  - [根据用户id获取个人信息](#%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7id%E8%8E%B7%E5%8F%96%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF)
+  - [根据用户id获取用户信息](#%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7id%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
   - [获取当前用户的所有关注者的id](#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E7%9A%84%E6%89%80%E6%9C%89%E5%85%B3%E6%B3%A8%E8%80%85%E7%9A%84id)
   - [获取当前用户的所有粉丝的id](#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E7%9A%84%E6%89%80%E6%9C%89%E7%B2%89%E4%B8%9D%E7%9A%84id)
 - [任务](#%E4%BB%BB%E5%8A%A1)
@@ -482,14 +482,16 @@ XianYux闲余挣闲钱系统API文档
 {
     "code":                    integer,    
     "message":                 string,
-    "tasks": {
-        "task_id":             integer,    //任务id
-        "user_id":             integer,    //发布者id
-        "task_type":           integer,    //任务类型，0为拿快递和外卖，1为填问卷
-        "task_sketch":         string,     //任务简述
-        "task_bonus":          integer,    //任务酬劳
-        "task_publishDate":    string      //发布日期
-    }
+    "tasks": [
+        {
+            "task_id":             integer,    //任务id
+            "user_id":             integer,    //发布者id
+            "task_type":           integer,    //任务类型，0为拿快递和外卖，1为填问卷
+            "task_sketch":         string,     //任务简述
+            "task_bonus":          integer,    //任务酬劳
+            "task_publishDate":    string      //发布日期
+        }
+    ]
 }
 ```
 
@@ -500,9 +502,11 @@ XianYux闲余挣闲钱系统API文档
 {
     "code":                    integer,    
     "message":                 string,
-    "tasks": {
-        //省略...
-    }
+    "tasks": [
+        {
+            //省略...
+        }
+    ]
 }
 ```
 - 400
@@ -522,7 +526,7 @@ XianYux闲余挣闲钱系统API文档
 
 
 
-## 根据用户id获取个人信息
+## 根据用户id获取用户信息
 
 > `GET /user/information`
 
