@@ -1,3 +1,7 @@
+"""
+API文档的用户user部分
+"""
+
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http.response import HttpResponse
@@ -37,13 +41,13 @@ __notLogin__ = {
 
 # 增加装饰器，跳过csrf的保护，前端请求就不会被forbidden
 # 或者在前端做csrf保护请求方式
-
-# 用户注册
 @csrf_exempt
 def user(request):
+    """用户注册"""
     try:
         if request.method == 'POST':
             parameters = request.POST
+
             # 先检查手机号是否唯一
             # 获取多个对象用filter
             filter_user = models.User.objects.filter(user_phone=parameters['user_phone'])
@@ -53,8 +57,11 @@ def user(request):
                     user_password=parameters['user_password']
                 )
                 new_user.save()
+
+                # session保存用户登录状态
                 request.session['user_id'] = new_user.user_id
                 request.session['user_login'] = True
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             else:
                 return HttpResponse(json.dumps(__hasExistUser__), content_type='application/json', charset='utf-8')
@@ -62,12 +69,15 @@ def user(request):
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
+
 @csrf_exempt
 def user_profile(request):
+    """PUT为完善或修改当前用户信息，GET为获取当前用户信息"""
     try:
         if request.session.get('login', None):
             if request.method == 'PUT':
                 parameters = request.PUT
+
                 # 获取单个对象用get
                 get_user = models.User.objects.get(user_id=request.session['user_id'])
                 get_user.user_icon = parameters['user_icon']
@@ -93,10 +103,12 @@ def user_profile(request):
                     get_student.student_academy = parameters['student_academy']
                     get_student.student_gender = parameters['student_gender']
                     get_student.save()
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             elif request.method == 'GET':
                 get_user = models.User.objects.get(user_id=request.session['user_id'])
                 get_student = models.Student.objects.get(user_id=request.session['user_id'])
+
                 __ok__['user'] = {
                     'user_id': get_user.user_id,
                     'user_phone': get_user.user_phone,
@@ -104,6 +116,7 @@ def user_profile(request):
                     'user_balance': get_user.user_balance,
                     'user_fillln': get_user.user_fillln
                 }
+
                 __ok__['student'] = {
                     'student_id': get_student.student_id,
                     'user_id': get_student.user_id,
@@ -113,6 +126,7 @@ def user_profile(request):
                     'student_academy': get_student.student_academy,
                     'student_gender': get_student.student_gender
                 }
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
             return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
@@ -120,11 +134,14 @@ def user_profile(request):
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
+
 @csrf_exempt
 def user_password_session(request):
+    """密码登录"""
     try:
         if request.method == 'POST':
             parameters = request.POST
+
             get_user = models.User.objects.get(user_phone=parameters['user_phone'])
             if get_user is None:
                 return HttpResponse(json.dumps(__notExistUser__), content_type='application/json', charset='utf-8')
@@ -134,18 +151,22 @@ def user_password_session(request):
                 request.session['user_id'] = get_user.user_id
                 request.session['user_login'] = True
                 __ok__['user_fillln'] = get_user.user_fillln
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
     except Exception as exc:
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
+
 @csrf_exempt
 def user_session(request):
+    """退出登录"""
     try:
         if request.session.get('login', None):
             if request.method == 'DELETE':
                 del request.session['user_id']
                 del request.session['user_login']
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
             return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
@@ -153,12 +174,15 @@ def user_session(request):
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
+
 @csrf_exempt
 def user_balance(request):
+    """获取当前用户的余额"""
     try:
         if request.session.get('user_login', None):
             get_user = models.User.objects.get(user_id=request.session['user_id'])
             __ok__['user_balance'] = get_user.user_balance
+
             return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
             return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
@@ -166,8 +190,10 @@ def user_balance(request):
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
+
 @csrf_exempt
 def user_tasks(request):
+    """获得当前用户发布/领取的所有任务id和共同属性"""
     try:
         if request.session.get('user_login', None):
             if request.method == 'GET':
@@ -178,7 +204,7 @@ def user_tasks(request):
                     filter_tasks = models.PublishTask.objects.filter(user_id=request.session['user_id'])
                 elif parameters['type'] == 1:
                     filter_tasks = models.PickTask.objects.filter(user_id=request.session['user_id'])
-            
+
                 tasks = []
                 for filter_task in filter_tasks:
                     get_task = models.Task.objects.get(task_id=filter_task.task_id)
@@ -191,6 +217,7 @@ def user_tasks(request):
                         'task_publishDate': strftime('%Y-%m-%d %H:%M:%S', get_task.task_publishDate)
                     })
                 __ok__['tasks'] = tasks
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
             return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
@@ -198,16 +225,20 @@ def user_tasks(request):
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
+
 @csrf_exempt
 def user_information(request):
+    """根据用户/关注的人/粉丝id获取用户信息(user_id/following_id/fan_id都适用)"""
     try:
         if request.session.get('user_login', None):
             if request.method == 'GET':
                 parameters = request.GET
+
                 users = []
                 for user_id_object in parameters['user_ids']:
                     get_user = models.User.objects.get(user_id=user_id_object['user_id'])
                     get_student = models.Student.objects.get(user_id=user_id_object['user_id'])
+
                     users.append({
                         'user': {
                             'user_id': get_user.user_id,
@@ -227,6 +258,7 @@ def user_information(request):
                         }
                     })
                 __ok__['users'] = users
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
             return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
@@ -237,6 +269,7 @@ def user_information(request):
 
 @csrf_exempt
 def user_following(request):
+    """POST为当前用户关注其它用户，DELETE为当前用户取关其它用户"""
     try:
         if request.session.get('user_login', None):
             if request.method == 'POST':
@@ -246,7 +279,7 @@ def user_following(request):
                     'following_id': parameters['user_id']
                 }
                 filter_followings = models.Following.objects.filter(**filter_dict)
-                
+
                 # 若未关注则关注
                 if filter_followings.__len__ == 0:
                     new_following = models.Following(
@@ -261,7 +294,7 @@ def user_following(request):
                         fan_id=request.session['user_id']
                     )
                     new_fan.save()
-                    
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             elif request.method == 'DELETE':
                 parameters = request.DELETE
@@ -282,7 +315,7 @@ def user_following(request):
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
-            return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')       
+            return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
     except Exception as exc:
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
@@ -290,6 +323,7 @@ def user_following(request):
 
 @csrf_exempt
 def user_followings(request):
+    """获取当前用户关注的所有用户的id"""
     try:
         if request.session.get('user_login', None):
             if request.method == 'GET':
@@ -300,6 +334,7 @@ def user_followings(request):
                         'following_id': filter_following.following_id
                     })
                 __ok__['followings'] = followings
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
             return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
@@ -307,8 +342,10 @@ def user_followings(request):
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
+
 @csrf_exempt
 def user_fans(request):
+    """获取当前用户的所有粉丝的id"""
     try:
         if request.session.get('user_login', None):
             if request.method == 'GET':
@@ -319,6 +356,7 @@ def user_fans(request):
                         'fan_id': filter_fan.fan_id
                     })
                 __ok__['fans'] = fans
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
             return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
