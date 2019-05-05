@@ -23,15 +23,15 @@ class Student(models.Model):
 
 
 #用户关注的对象
-class Follower(models.Model):
-    user_id = models.ForeignKey('User',on_delete=models.CASCADE)
-    follower_id = models.IntegerField()
-
-
-#关注用户的对象
 class Following(models.Model):
     user_id = models.ForeignKey('User',on_delete=models.CASCADE)
     following_id = models.IntegerField()
+
+
+#关注用户的对象
+class Fan(models.Model):
+    user_id = models.ForeignKey('User',on_delete=models.CASCADE)
+    fan_id = models.IntegerField()
 
 
 #开支帐单
