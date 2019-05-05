@@ -178,7 +178,7 @@ def user_tasks(request):
                     filter_tasks = models.PublishTask.objects.filter(user_id=request.session['user_id'])
                 elif parameters['type'] == 1:
                     filter_tasks = models.PickTask.objects.filter(user_id=request.session['user_id'])
-                
+            
                 tasks = []
                 for filter_task in filter_tasks:
                     get_task = models.Task.objects.get(task_id=filter_task.task_id)
@@ -188,8 +188,138 @@ def user_tasks(request):
                         'task_type': get_task.task_type,
                         'task_sketch': get_task.task_sketch,
                         'task_bonus': get_task.task_bonus,
-                        # 时间解析
+                        'task_publishDate': strftime('%Y-%m-%d %H:%M:%S', get_task.task_publishDate)
                     })
+                __ok__['tasks'] = tasks
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+        else:
+            return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
+    except Exception as exc:
+        print(exc)
+        return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+
+@csrf_exempt
+def user_information(request):
+    try:
+        if request.session.get('user_login', None):
+            if request.method == 'GET':
+                parameters = request.GET
+                users = []
+                for user_id_object in parameters['user_ids']:
+                    get_user = models.User.objects.get(user_id=user_id_object['user_id'])
+                    get_student = models.Student.objects.get(user_id=user_id_object['user_id'])
+                    users.append({
+                        'user': {
+                            'user_id': get_user.user_id,
+                            'user_phone': get_user.user_phone,
+                            'user_icon': get_user.user_icon,
+                            'user_balance': get_user.user_balance,
+                            'user_fillln': get_user.user_fillln
+                        },
+                        'student': {
+                            'student_id': get_student.student_id,
+                            'user_id': get_student.user_id,
+                            'student_number': get_student.student_number,
+                            'student_name': get_student.student_name,
+                            'student_university': get_student.student_university,
+                            'student_academy': get_student.student_academy,
+                            'student_gender': get_student.student_gender
+                        }
+                    })
+                __ok__['users'] = users
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+        else:
+            return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
+    except Exception as exc:
+        print(exc)
+        return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+
+
+@csrf_exempt
+def user_following(request):
+    try:
+        if request.session.get('user_login', None):
+            if request.method == 'POST':
+                parameters = request.POST
+                filter_dict = {
+                    'user_id': request.session['user_id'],
+                    'following_id': parameters['user_id']
+                }
+                filter_followings = models.Following.objects.filter(**filter_dict)
+                
+                # 若未关注则关注
+                if filter_followings.__len__ == 0:
+                    new_following = models.Following(
+                        user_id=request.session['user_id'],
+                        following_id=parameters['user_id']
+                    )
+                    new_following.save()
+
+                    # 并且要添加到粉丝列表
+                    new_fan = models.Fan(
+                        user_id=parameters['user_id'],
+                        fan_id=request.session['user_id']
+                    )
+                    new_fan.save()
+                    
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+            elif request.method == 'DELETE':
+                parameters = request.DELETE
+
+                # 删除following表条目
+                filter_following_dict = {
+                    'user_id': request.session['user_id'],
+                    'following_id': parameters['user_id']
+                }
+                models.Following.objects.filter(**filter_following_dict).delete()
+
+                # 删除fan表条目
+                filter_fan_fict = {
+                    'user_id': parameters['user_id'],
+                    'fan_id': request.session['user_id']
+                }
+                models.Fan.objects.filter(**filter_fan_fict).delete()
+
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+        else:
+            return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')       
+    except Exception as exc:
+        print(exc)
+        return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+
+
+@csrf_exempt
+def user_followings(request):
+    try:
+        if request.session.get('user_login', None):
+            if request.method == 'GET':
+                followings = []
+                filter_followings = models.Following.objects.filter(user_id=request.session['user_id'])
+                for filter_following in filter_followings:
+                    followings.append({
+                        'following_id': filter_following.following_id
+                    })
+                __ok__['followings'] = followings
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+        else:
+            return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
+    except Exception as exc:
+        print(exc)
+        return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+
+@csrf_exempt
+def user_fans(request):
+    try:
+        if request.session.get('user_login', None):
+            if request.method == 'GET':
+                fans = []
+                filter_fans = models.Fan.objects.filter(user_id=request.session['user_id'])
+                for filter_fan in filter_fans:
+                    fans.append({
+                        'fan_id': filter_fan.fan_id
+                    })
+                __ok__['fans'] = fans
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
             return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
     except Exception as exc:

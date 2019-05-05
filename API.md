@@ -17,8 +17,10 @@ XianYux闲余挣闲钱系统API文档
   - [用户退出登录](#%E7%94%A8%E6%88%B7%E9%80%80%E5%87%BA%E7%99%BB%E5%BD%95)
   - [获取当前用户的余额](#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E7%9A%84%E4%BD%99%E9%A2%9D)
   - [获得当前用户发布/领取的所有任务id和共同属性](#%E8%8E%B7%E5%BE%97%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8F%91%E5%B8%83%E9%A2%86%E5%8F%96%E7%9A%84%E6%89%80%E6%9C%89%E4%BB%BB%E5%8A%A1id%E5%92%8C%E5%85%B1%E5%90%8C%E5%B1%9E%E6%80%A7)
-  - [根据用户id获取用户信息](#%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7id%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
-  - [获取当前用户的所有关注者的id](#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E7%9A%84%E6%89%80%E6%9C%89%E5%85%B3%E6%B3%A8%E8%80%85%E7%9A%84id)
+  - [根据用户/关注的人/粉丝id获取用户信息(user_id/following_id/fan_id都适用)](#%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E5%85%B3%E6%B3%A8%E7%9A%84%E4%BA%BA%E7%B2%89%E4%B8%9Did%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AFuseridfollowingidfanid%E9%83%BD%E9%80%82%E7%94%A8)
+  - [当前用户关注其它用户](#%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%85%B3%E6%B3%A8%E5%85%B6%E5%AE%83%E7%94%A8%E6%88%B7)
+  - [当前用户取关其它用户](#%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8F%96%E5%85%B3%E5%85%B6%E5%AE%83%E7%94%A8%E6%88%B7)
+  - [获取当前用户关注的所有用户的id](#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%85%B3%E6%B3%A8%E7%9A%84%E6%89%80%E6%9C%89%E7%94%A8%E6%88%B7%E7%9A%84id)
   - [获取当前用户的所有粉丝的id](#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E7%9A%84%E6%89%80%E6%9C%89%E7%B2%89%E4%B8%9D%E7%9A%84id)
 - [任务](#%E4%BB%BB%E5%8A%A1)
   - [关于任务API（注意事项）](#%E5%85%B3%E4%BA%8E%E4%BB%BB%E5%8A%A1api%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
@@ -526,7 +528,7 @@ XianYux闲余挣闲钱系统API文档
 
 
 
-## 根据用户id获取用户信息
+## 根据用户/关注的人/粉丝id获取用户信息(user_id/following_id/fan_id都适用)
 
 > `GET /user/information`
 
@@ -603,8 +605,93 @@ XianYux闲余挣闲钱系统API文档
 ```
 
 
+## 当前用户关注其它用户
 
-## 获取当前用户的所有关注者的id
+> `POST /user/following`
+
+**参数**
+```
+{
+    "user_id":    integer    //要关注的其他用户的id
+}
+```
+
+**返回值**
+
+```
+{
+    "code":       integer,    //状态码
+    "message":    string,     //信息
+}
+```
+
+**返回示例**
+
+- 200
+```
+{
+    "code": 200,
+    "message": "OK",
+}
+```
+- 400
+```
+    "code": 400,
+    "message": "服务器发生错误"
+```
+
+- 401
+
+```
+    "code": 401,
+    "message": "用户未登录"
+```
+
+
+## 当前用户取关其它用户
+
+> `DELETE /user/following`
+
+**参数**
+```
+{
+    "user_id":    integer    //要取关的其他用户的id
+}
+```
+
+**返回值**
+
+```
+{
+    "code":       integer,    //状态码
+    "message":    string,     //信息
+}
+```
+
+**返回示例**
+
+- 200
+```
+{
+    "code": 200,
+    "message": "OK",
+}
+```
+- 400
+```
+    "code": 400,
+    "message": "服务器发生错误"
+```
+
+- 401
+
+```
+    "code": 401,
+    "message": "用户未登录"
+```
+
+
+## 获取当前用户关注的所有用户的id
 
 > `GET /user/followings`
 
@@ -621,7 +708,7 @@ XianYux闲余挣闲钱系统API文档
     "message":          string,     //信息
     "followings": [
         {
-            user_id:    integer     //元素是int的用户id
+            "following_id":    integer     //元素是当前用户关注的用户的id
         }
     ]
 }
@@ -636,10 +723,10 @@ XianYux闲余挣闲钱系统API文档
     "message": "OK",
     "followings": [
         {
-            user_id: 5    
+            "following_id": 5    
         }
         {
-            user_id: 12    
+            "following_id": 12    
         }
         ...
     ]
@@ -659,7 +746,6 @@ XianYux闲余挣闲钱系统API文档
 ```
 
 
-
 ## 获取当前用户的所有粉丝的id 
 > `GET /user/fans`
 
@@ -675,7 +761,7 @@ XianYux闲余挣闲钱系统API文档
     "message":          string,     //信息
     "fans": [
         {
-            user_id:    integer     //元素是int的用户id
+            "fan_id":    integer     //元素是用户的粉丝的id
         }
     ]
 }
@@ -689,10 +775,10 @@ XianYux闲余挣闲钱系统API文档
     "message": "OK",
     "fans": [
         {
-            user_id: 5    
+            "fan_id": 5    
         }
         {
-            user_id: 12    
+            "fan_id": 12    
         }
         ...
     ]
