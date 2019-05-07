@@ -159,6 +159,18 @@ def user_password_session(request):
 
 
 @csrf_exempt
+def user_password(request):
+    """找回密码-重置密码"""
+    pass
+
+
+@csrf_exempt
+def user_sms_session(request):
+    """用户短信登录"""
+    pass
+
+
+@csrf_exempt
 def user_session(request):
     """退出登录"""
     try:
