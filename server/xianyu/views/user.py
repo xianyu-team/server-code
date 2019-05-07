@@ -5,8 +5,12 @@ API文档的用户user部分
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http.response import HttpResponse
-import json
 from time import strftime, localtime
+import json
+import time
+import hashlib
+import uuid
+import requests
 
 from xianyu import models
 
@@ -34,6 +38,16 @@ __wrongPassword__ = {
     'message': '密码错误'
 }
 
+__failedSendVerification__ = {
+    'code': 400,
+    'message': '验证码发送失败'
+}
+
+__wrongVerification__ = {
+    'code': 400,
+    'message': '验证码验证失败'
+}
+
 __notLogin__ = {
     'code': 401,
     'message': '未登录'
@@ -41,6 +55,54 @@ __notLogin__ = {
 
 # 增加装饰器，跳过csrf的保护，前端请求就不会被forbidden
 # 或者在前端做csrf保护请求方式
+
+xianyu_app_secret = '940441f4e010'
+xianyu_AppKey: '7a2d8351ad47c6310468f01ca4d18c5e'
+
+def _verify_phone_code_(user_phone, verification_code):
+    """
+    此函数为私有函数，作用是验证手机验证码，传入参数为手机号和验证码，返回值为bool值，true为成功验证
+    状态码：
+        200: 操作成功
+        301: 被封禁
+        315: IP限制
+        403: 非法操作或没有权限
+        404: 对象不存在
+        413: 验证失败(短信服务)
+        414: 参数错误
+        500: 服务器内部错误
+    这里只验证几个重要的状态码
+    """
+    sms_url = 'https://api.netease.im/sms/verifycode.action'
+    post_data = {
+        'mobile': user_phone,
+        'code': verification_code
+    }
+
+    # 以下是网易云官网要求的headers
+    cur_time = str(time.time())
+    app_secret = xianyu_app_secret
+    nonce = str(uuid.uuid4())
+
+    # 参数拼接
+    post_param = app_secret + nonce + cur_time
+    # 哈希加密
+    check_sum = hashlib.new('sha1', post_param.encode('utf-8')).hexdigest()
+
+    headers = {
+        'AppKey': xianyu_AppKey,
+        'Nonce': nonce,
+        'CurTime': cur_time,
+        'CheckSum': check_sum
+    }
+
+    response = requests.post(sms_url, data=post_data, headers=headers)
+    if response['code'] == 200:
+        return True
+    else:
+        return False
+
+
 @csrf_exempt
 def user(request):
     """用户注册"""
@@ -52,17 +114,22 @@ def user(request):
             # 获取多个对象用filter
             filter_user = models.User.objects.filter(user_phone=parameters['user_phone'])
             if filter_user.__len__() == 0:
-                new_user = models.User(
-                    user_phone=parameters['user_phone'],
-                    user_password=parameters['user_password']
-                )
-                new_user.save()
+                is_verified = _verify_phone_code_(parameters['user_phone'], parameters['verification_code'])
 
-                # session保存用户登录状态
-                request.session['user_id'] = new_user.user_id
-                request.session['user_login'] = True
+                if is_verified:
+                    new_user = models.User(
+                        user_phone=parameters['user_phone'],
+                        user_password=parameters['user_password']
+                    )
+                    new_user.save()
 
-                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+                    # session保存用户登录状态
+                    request.session['user_id'] = new_user.user_id
+                    request.session['user_login'] = True
+
+                    return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+                else:
+                    return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')    
             else:
                 return HttpResponse(json.dumps(__hasExistUser__), content_type='application/json', charset='utf-8')
     except Exception as exc:
@@ -150,8 +217,8 @@ def user_password_session(request):
             else:
                 request.session['user_id'] = get_user.user_id
                 request.session['user_login'] = True
-                __ok__['user_fillln'] = get_user.user_fillln
 
+                __ok__['user_fillln'] = get_user.user_fillln
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
     except Exception as exc:
         print(exc)
@@ -161,13 +228,45 @@ def user_password_session(request):
 @csrf_exempt
 def user_password(request):
     """找回密码-重置密码"""
-    pass
+    try:
+        if request.method == 'PUT':
+            parameters = request.PUT
+
+            is_verified = _verify_phone_code_(parameters['user_phone'], parameters['verification_code'])
+
+            if is_verified:
+                get_user = models.User.objects.get(user_phone=parameters['user_phone'])
+                get_user.user_password = parameters['user_password']
+                get_user.save()
+            else:
+                return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')
+    except Exception as exc:
+        print(exc)
+        return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
 
 @csrf_exempt
 def user_sms_session(request):
     """用户短信登录"""
-    pass
+    try:
+        if request.method == 'POST':
+            parameters = request.POST
+
+            is_verified = _verify_phone_code_(parameters['user_phone'], parameters['verification_code'])
+
+            if is_verified:
+                get_user = models.User.objects.get(user_phone=parameters['user_phone'])
+                
+                request.session['user_id'] = get_user.user_id
+                request.session['user_login'] = True
+
+                __ok__['user_fillln'] = get_user.user_fillln
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+            else:
+                return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')
+    except Exception as exc:
+        print(exc)
+        return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
 
 @csrf_exempt
