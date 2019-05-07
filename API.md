@@ -7,7 +7,7 @@ XianYux闲余挣闲钱系统API文档
 - [服务器IP和端口号](#%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3%E5%8F%B7)
 - [Session](#session)
 - [手机短信](#%E6%89%8B%E6%9C%BA%E7%9F%AD%E4%BF%A1)
-  - [获取手机验证码](#%E8%8E%B7%E5%8F%96%E6%89%8B%E6%9C%BA%E9%AA%8C%E8%AF%81%E7%A0%81)
+  - [向手机发送验证码](#%E5%90%91%E6%89%8B%E6%9C%BA%E5%8F%91%E9%80%81%E9%AA%8C%E8%AF%81%E7%A0%81)
   - [验证手机验证码](#%E9%AA%8C%E8%AF%81%E6%89%8B%E6%9C%BA%E9%AA%8C%E8%AF%81%E7%A0%81)
 - [用户](#%E7%94%A8%E6%88%B7)
   - [用户注册](#%E7%94%A8%E6%88%B7%E6%B3%A8%E5%86%8C)
@@ -58,7 +58,7 @@ XianYux闲余挣闲钱系统API文档
 # 手机短信
 
 
-## 获取手机验证码
+## 向手机发送验证码
 > `GET /sms/verification_code`
 
 **参数**
@@ -72,9 +72,8 @@ XianYux闲余挣闲钱系统API文档
 
 ```
 {
-    "code":                 integer,    //状态码
-    "message":              string,     //信息
-    "verification_code":    string      //手机验证码
+    "code":       integer,    //状态码
+    "message":    string      //信息
 }
 ```
 
@@ -83,15 +82,14 @@ XianYux闲余挣闲钱系统API文档
 ```
 {
     "code": 200,
-    "message": "OK",
-    "verification_code": "5128"
+    "message": "OK"
 }
 ```
 - 400
 ```
     "code": 400,
-    "message": "无效的手机号"  //该手机号已经被注册（备选）
-                              //服务器发生错误（备选）
+    "message": "验证码发送失败"  //服务器发生错误（备选）
+                              
 ```
 
 
