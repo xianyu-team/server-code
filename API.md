@@ -1,6 +1,8 @@
 # API
 XianYux闲余挣闲钱系统API文档
 
+**（涉及到手机验证码的API都不可用，而其它的API已完成，但未进行测试）**
+
 - [API](#api)
 - [服务器IP和端口号](#%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3%E5%8F%B7)
 - [Session](#session)
@@ -48,8 +50,8 @@ XianYux闲余挣闲钱系统API文档
 
 # Session
 
-* 用户id: request.session['user_id']
-* 登录状态: request.session['login']
+* 用户id: request.session['user_id']: integer
+* 登录状态: request.session['login']: bool
 
 
 
