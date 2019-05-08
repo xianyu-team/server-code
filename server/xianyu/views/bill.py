@@ -23,7 +23,7 @@ __notLogin__ = {
 
 @csrf_exempt
 def bill(request):
-    if request.session.get('login', None) == True:
+    if request.session.get('is_login', None) == True:
         if request.method == 'GET':
             try:
                 filter_bills = models.Bill.objects.filter(user_id = request.session.get('user_id'))
