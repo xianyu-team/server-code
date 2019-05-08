@@ -23,7 +23,7 @@ __notLogin__ = {
 
 @csrf_exempt
 def task(request):
-    if request.session.get('login', None) == True:
+    if request.session.get('is_login', None) == True:
         if request.method == 'GET':
             try:
                 #最新任务
@@ -58,7 +58,7 @@ def task(request):
 
 @csrf_exempt
 def task_delivery_detail(request):
-    if request.session.get('login', None) == True:
+    if request.session.get('is_login', None) == True:
         if request.method == 'GET':
             try:
                 filter_delivery = models.Delivery.objects.filter(task_id = request.GET.task_id)
@@ -73,7 +73,7 @@ def task_delivery_detail(request):
     
 @csrf_exempt
 def task_questionnaire_detail(request):
-    if request.session.get('login', None) == True:
+    if request.session.get('is_login', None) == True:
         if request.method == 'GET':
             try:
                 filter_questionnaire = models.Questionnaire.objects.filter(task_id = request.GET.task_id)
@@ -92,7 +92,7 @@ def task_questionnaire_detail(request):
 
 @csrf_exempt
 def task_acceptance(request):
-    if request.session.get('login', None) == True:
+    if request.session.get('is_login', None) == True:
         if request.method == 'POST':
             try:
                 pickTask = models.PickTask()
@@ -109,7 +109,7 @@ def task_acceptance(request):
 
 @csrf_exempt
 def task_delivery_complishment(request):
-    if request.session.get('login', None) == True:
+    if request.session.get('is_login', None) == True:
         if request.method == 'POST':
             try:
                 #将递送设置为已完成
@@ -144,7 +144,7 @@ def task_delivery_complishment(request):
 
 @csrf_exempt
 def task_delivery(request):
-    if request.session.get('login', None) == True:
+    if request.session.get('is_login', None) == True:
         if request.method == 'DELETE':
             try:
                 #从任务列表删除任务
@@ -229,7 +229,7 @@ def task_delivery(request):
 
 @csrf_exempt
 def task_questionnaire(request):
-    if request.session.get('login', None) == True:
+    if request.session.get('is_login', None) == True:
         if request.method == 'POST':
             try:
                 #判断余额是否足够
@@ -290,7 +290,7 @@ def task_questionnaire(request):
 
 @csrf_exempt
 def task_questionnaire_answer(request):
-    if request.session.get('login', None) == True:
+    if request.session.get('is_login', None) == True:
         if request.method == 'POST':
             try:
                  #将问卷份数减一
@@ -350,7 +350,7 @@ def task_questionnaire_answer(request):
 
 @csrf_exempt
 def task_questionnaire_answerSheet(request):
-    if request.session.get('login', None) == True:
+    if request.session.get('is_login', None) == True:
         if request.method == 'GET':
             try:
                 #获取答卷
@@ -381,7 +381,7 @@ def task_questionnaire_answerSheet(request):
 
 @csrf_exempt
 def task_questionnaire_Statistics(request):
-    if request.session.get('login', None) == True:
+    if request.session.get('is_login', None) == True:
         if request.method == 'GET':
             try:
                 statistics = []
@@ -433,7 +433,7 @@ def task_questionnaire_Statistics(request):
 
 @csrf_exempt
 def task_questionnaire_closure(request):
-    if request.session.get('login', None) == True:
+    if request.session.get('is_login', None) == True:
         if request.method == 'PUT':
             try:
                 #问卷截止
