@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from .views import sms
 from .views import user
@@ -6,7 +6,7 @@ from .views import task
 from .views import bill
 
 urlpatterns = [
-    path('sms/verification_code', sms.sms_verification_code),
+    re_path(r'^sms/verification_code/(?P<user_phone>\d{11})$', sms.sms_verification_code),
     path('sms/verification', sms.sms_verification),
 
     path('user', user.user),
@@ -16,9 +16,10 @@ urlpatterns = [
     path('user/sms/session', user.user_sms_session),
     path('user/session', user.user_session),
     path('user/balance', user.user_balance),
-    path('user/tasks', user.user_tasks),
-    path('user/information', user.user_information),
-    path('user/following', user.user_following),
+    re_path(r'^user/tasks/(?P<t_type>\d)$', user.user_tasks),
+    path('user/batch/information', user.user_batch_information),
+    path('user/following', user.user_following_post),
+    re_path(r'^user/following/(?P<user_id>\d+)$', user.user_following_delete),
     path('user/followings', user.user_followings),
     path('user/fans', user.user_fans),
 
