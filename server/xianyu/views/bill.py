@@ -27,7 +27,10 @@ def bill(request):
         if request.method == 'GET':
             try:
                 filter_bills = models.Bill.objects.filter(user_id = request.session.get('user_id'))
-                __ok__['bills'] = filter_bills
+                __ok__['data'] = {
+                    'bills': filter_bills
+                }
+                
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)

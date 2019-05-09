@@ -826,13 +826,15 @@ GET /sms/verification_code/15989061915
 所以前端获取关于任务的信息时，必须先获取任务的共同属性，得到该任务的类型（递送任务或问卷任务），然后再根据递送任务或问卷任务的API获取特殊的信息。
 
 ## 获取任务大厅的所有任务id和共同属性
-> `GET /task`
+> `GET /task`/{t_type}
 
-**参数**
+**参数**	
 
 ```
 {
-    "type":    integer    //0为最新任务, 1关注的人发布的任务, 2为价格最高
+    把 url 中的 {t_type} 替换成integer类型的 0、1、2, 0为最新任务, 1关注的人发布的任务, 2为价格最高, 如下所示：
+
+    GET /task/1
 }
 ```
 
@@ -842,30 +844,35 @@ GET /sms/verification_code/15989061915
 {
     "code":                       integer,    //状态码
     "message":                    string,     //信息
-    "tasks": [    
-        {
-            "task_id":            integer,    //任务ID(主键)
-            "user_id":            integer,    //发布者id	
-            "task_type":          string,     //任务类型，0为拿快递和外卖，1为问卷
-            "task_sketch":        string,     //任务简介
-            "task_bonus":         integer,    //悬赏金额
-            "task_publishDate"    string      //发布时间，#格式为YYYY-MM-DD HH:MM:SS
-        }
-    ]
+    "data": {
+         tasks": [    
+            {
+                "task_id":            integer,    //任务ID(主键)
+                "user_id":            integer,    //发布者id	
+                "task_type":          string,     //任务类型，0为拿快递和外卖，1为问卷
+                "task_sketch":        string,     //任务简介
+                "task_bonus":         integer,    //悬赏金额
+                "task_publishDate"    string      //发布时间，#格式为YYYY-MM-DD HH:MM:SS
+            }
+        ]   
+    }
 }
 ```
 
 **返回示例**
+
 - 200
 ```
 {
     "code": 200,
     "message": "OK",
-    "tasks": [
-        {
-            //省略...
-        }
-    ]
+    "data":{
+        tasks": [
+            {
+                //省略...
+            }
+        ]    
+    }
 }
 ```
 - 400
@@ -884,13 +891,13 @@ GET /sms/verification_code/15989061915
 
 ## 根据任务id获取拿快递和外卖的详细信息
 
-> `GET /task/delivery/detail`
+> `GET /task/delivery/detail/{task_id}`
 
-**参数**
+**参数**	
 
 ```
 {
-    "task_id":    integer
+    把 url 中的 {task_id} 替换成integer类型的任务id
 }
 ```
 
@@ -900,14 +907,17 @@ GET /sms/verification_code/15989061915
 {
     "code":                        integer,    //状态码
     "message":                     string,     //信息
-    "delivery": {
-        "delivery_id":             integer,    //递送任务id
-        "task_id":                 integer,    //递送任务对应的任务id
-        "delivery_detail":         string,     //订单类型，0为拿快递和外卖，1为问卷
-        "delivery_picked":         string,     //任务简介
-        "delivery_complished":     integer,    //悬赏金额
-        "delivery_complishDate"    string      //发布时间，#格式为YYYY-MM-DD HH:MM:SS
+    "data": {
+  		"delivery": {
+            "delivery_id":             integer,    //递送任务id
+            "task_id":                 integer,    //递送任务对应的任务id
+            "delivery_detail":         string,     //订单类型，0为拿快递和外卖，1为问卷
+            "delivery_picked":         string,     //任务简介
+            "delivery_complished":     integer,    //悬赏金额
+            "delivery_complishDate"    string      //发布时间，#格式为YYYY-MM-DD HH:MM:SS
+        }      
     }
+
 }
 ```
 
@@ -918,11 +928,11 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK",
-    "tasks": [
-        {
+    "data": {
+  		"delivery": {
             //省略...
         }
-    ]
+    }
 }
 ```
 - 400
@@ -941,13 +951,13 @@ GET /sms/verification_code/15989061915
 
 ## 根据任务id获取问卷和题目的详细信息
 
-> `GET /task/questionnaire/detail`
+> `GET /task/questionnaire/detail/{task_id}`
 
-**参数**
+**参数**	
 
 ```
 {
-    "task_id":    integer
+    把 url 中的 {task_id} 替换成integer类型的任务id
 }
 ```
 
@@ -957,24 +967,26 @@ GET /sms/verification_code/15989061915
 {
     "code":                                integer,    //状态码
     "message":                             string,     //信息
-    "questionnaire": {
-        "questionnaire_id":                integer,    //问卷id
-        "task_id":                         integer,    //问卷对应的任务id
-        "questionnaire_closed":            integer,    //是否截止
-        "questionnaire_deadline":          string,     //截止时间，#格式为YYYY-MM-DD HH:MM:SS
-        "questions": [
-            {
-                "question_id":             integer,    //题目id
-                "questionnaire_id":        integer,    //题目所属的问卷id
-                "question_description":    string,     //题目描述
-                "question_type":           integer,    //题目类型，0为单选，1为多选，2为填空题
-                "question_a":              string,     //选项A描述
-                "question_b":              string,     //选项B描述
-                "question_c":              string,     //选项C描述
-                "question_d":              string      //选项D描述
-            }
-        ]
-    }   
+    "data": {
+    	"questionnaire": {
+            "questionnaire_id":                integer,    //问卷id
+            "task_id":                         integer,    //问卷对应的任务id
+            "questionnaire_closed":            integer,    //是否截止
+            "questionnaire_deadline":          string,     //截止时间，#格式为YYYY-MM-DD HH:MM:SS
+            "questions": [
+                {
+                    "question_id":             integer,    //题目id
+                    "questionnaire_id":        integer,    //题目所属的问卷id
+                    "question_description":    string,     //题目描述
+                    "question_type":           integer,    //题目类型，0为单选，1为多选，2为填空题
+                    "question_a":              string,     //选项A描述
+                    "question_b":              string,     //选项B描述
+                    "question_c":              string,     //选项C描述
+                    "question_d":              string      //选项D描述
+                }
+            ]
+        }     
+    }  
 }
 ```
 
@@ -984,11 +996,9 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK",
-    "questionnaire": [
-        {
-            //省略...
-        }
-    ]
+    "data": {
+        //省略...
+    }
 }
 ```
 - 400
@@ -1102,13 +1112,13 @@ GET /sms/verification_code/15989061915
 
 ## 发布者取消拿快递和外卖的任务(钱退回给发布者)
 
-> `DELETE /task/delivery` 
+> `DELETE /task/delivery/{task_id}` 
 
-**参数**
+**参数**	
 
 ```
 {
-    "task_id":    integer     //订单ID(主键)
+    把 url 中的 {task_id} 替换成integer类型的任务id
 }
 ```
 
@@ -1153,7 +1163,7 @@ GET /sms/verification_code/15989061915
 ```
 {
     "task": {
-        "task_type":                string,     //订单类型，0为拿快递和外卖，1为问卷
+        "task_type":                integer,    //订单类型，0为拿快递和外卖，1为问卷
         "task_sketch":              string      //任务简述
         "task_bonus":               integer,    //悬赏金额
         "task_publishDate":         string,     //发布时间  
@@ -1314,13 +1324,13 @@ GET /sms/verification_code/15989061915
 
 ## 填写者获取自己填写过的答卷(包含题目和答案)
 
-> `GET /task/questionnaire/answerSheet` 
+> `GET /task/questionnaire/answerSheet/{questionnaire_id}` 
 
-**参数**
+**参数**	
 
 ```
 {
-    "questionnaire_id":    integer,    //问卷id
+    把 url 中的 {questionnaire_id} 替换成integer类型的问卷id
 }
 ```
 
@@ -1330,26 +1340,28 @@ GET /sms/verification_code/15989061915
 {
     "code":                                integer,    //状态码
     "message":                             string      //信息
-    "answerSheet": [
-        {
-            "question": {
-                "question_id":             integer,    //题目id
-                "questionnaire_id":        integer,    //问卷id
-                "question_description":    string,     //问题描述
-                "question_type":           integer,    //问题类型,0为单选，1为多选，2为填空
-                "question_a":              string,     //选项a的描述
-                "question_b":              string,
-                "question_c":              string,
-                "question_d":              string,
+    "data": {
+    	"answerSheet": [
+            {
+                "question": {
+                    "question_id":             integer,    //题目id
+                    "questionnaire_id":        integer,    //问卷id
+                    "question_description":    string,     //问题描述
+                    "question_type":           integer,    //问题类型,0为单选，1为多选，2为填空
+                    "question_a":              string,     //选项a的描述
+                    "question_b":              string,
+                    "question_c":              string,
+                    "question_d":              string,
+                }
+                "answer": {
+                    "answer_id":               integer,    //答案id
+                    "answerSheet_id":          integer,    //答卷id
+                    "question_id":             integer,    //问题id
+                    "answer_content":          string      //答案，单选示例"A",多选示例"ABD",填空示例"watchcat2k"
+                }
             }
-            "answer": {
-                "answer_id":               integer,    //答案id
-                "answerSheet_id":          integer,    //答卷id
-                "question_id":             integer,    //问题id
-                "answer_content":          string      //答案，单选示例"A",多选示例"ABD",填空示例"watchcat2k"
-            }
-        }
-    ]   
+        ]     
+    }  
 }
 ```
 
@@ -1360,6 +1372,9 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK"
+    "data": {
+        ...
+    }
 }
 ```
 - 400
@@ -1376,13 +1391,13 @@ GET /sms/verification_code/15989061915
 
 ## 发布者查看问卷的统计信息
 
-> `GET /task/questionnaire/Statistics` 
+> `GET /task/questionnaire/Statistics/{questionnaire_id}` 
 
 **参数**
 
 ```
 {
-    "questionnaire_id":    integer,    //问卷id
+    把 url 中的 {questionnaire_id} 替换成integer类型的问卷id
 }
 ```
 
@@ -1392,32 +1407,34 @@ GET /sms/verification_code/15989061915
 {
     "code":                                     integer,    //状态码
     "message":                                  string      //信息
-    "statistics": [
-        {
-            question: {
-                "question_id":                  integer,    //题目id
-                "questionnaire_id":             integer,    //问卷id
-                "question_description":         string,     //问题描述
-                "question_type":                integer,    //问题类型,0为单选，1为多选，2为填空
-                "question_a":                   string,     //选项a的描述
-                "question_b":                   string,
-                "question_c":                   string,
-                "question_d":                   string,
+    "data": {
+     	"statistics": [
+            {
+                question: {
+                    "question_id":                  integer,    //题目id
+                    "questionnaire_id":             integer,    //问卷id
+                    "question_description":         string,     //问题描述
+                    "question_type":                integer,    //问题类型,0为单选，1为多选，2为填空
+                    "question_a":                   string,     //选项a的描述
+                    "question_b":                   string,
+                    "question_c":                   string,
+                    "question_d":                   string,
+                }
+                "answer": {
+                    "answer_id":                  	integer,    //答案id
+                    "answer_a_count":               integer,    //选A的数量
+                    "answer_b_count":               integer,  
+                    "answer_c_count":               integer,  
+                    "answer_d_count":               integer,    
+                    "answer_gap_filling" [
+                        {
+                            gap_filling_content:    string    //填空题答案
+                        }
+                    ]
+                }
             }
-            "answer": {
-            	"answer_id":                  	integer,    //答案id
-                "answer_a_count":               integer,    //选A的数量
-                "answer_b_count":               integer,  
-                "answer_c_count":               integer,  
-                "answer_d_count":               integer,    
-                "answer_gap_filling" [
-                    {
-                        gap_filling_content:    string    //填空题答案
-                    }
-                ]
-            }
-        }
-    ]  
+        ]     
+    }
 }
 ```
 
@@ -1428,6 +1445,9 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK"
+    "data": {
+        ...
+    }
 }
 ```
 - 400
@@ -1504,16 +1524,18 @@ GET /sms/verification_code/15989061915
 {
     "code":                         integer,    //状态码
     "message":                      string,     //信息
-    "bills": [
-        {
-            "bill_id":              integer,    //账单id
-            "user_id":              integer,    //账单所属用户id
-            "bill_type":            integer,    //0为收入，1为支出
-            "bill_number":          integer,    //账单金额
-            "bill_description":     string,     //账单描述
-            "bill_time":            string,     //账单时间
-        }
-    ]
+    "data": {
+     	"bills": [
+            {
+                "bill_id":              integer,    //账单id
+                "user_id":              integer,    //账单所属用户id
+                "bill_type":            integer,    //0为收入，1为支出
+                "bill_number":          integer,    //账单金额
+                "bill_description":     string,     //账单描述
+                "bill_time":            string,     //账单时间
+            }
+        ]   
+    }
 }
 ```
 
@@ -1523,11 +1545,9 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK",
-    "bills": [
-        {
-            //省略...
-        }
-    ]
+    "data": {
+         //省略...
+    }
 }
 ```
 - 400
