@@ -22,18 +22,20 @@ __notLogin__ = {
 
 
 @csrf_exempt
-def task(request):
+def task(request,  t_type):
     if request.session.get('is_login', None) == True:
         if request.method == 'GET':
             try:
                 #最新任务
-                if request.GET.type == 0:       
+                if t_type == 0:       
                     filter_tasks = models.Task.objects.all().order_by('-task_publishDate')
-                    __ok__['tasks'] = filter_tasks
+                    __ok__['data'] = {
+                        'tasks': filter_tasks
+                    }
                     return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
 
                 #关注的用户发布的任务
-                elif request.GET.type == 1:     
+                elif t_type == 1:     
                     #获取关注的用户
                     filter_followers = models.Follower.objects.filter(id = request.session.get('user_id'))
                     tasks = []
@@ -41,13 +43,19 @@ def task(request):
                     for i in filter_followers:
                         filter_tasks = models.Task.objects.filter(user_id = i.follower_id)
                         tasks.append(filter_tasks)
-                    __ok__['tasks'] = tasks
+
+                    __ok__['data'] = {
+                        'tasks': filter_tasks
+                    }
+
                     return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
 
                 #金额最高的任务
-                elif request.GET.type == 2:     
+                elif t_type == 2:     
                     filter_tasks = models.Task.objects.all().order_by('-task_bonus')
-                    __ok__['tasks'] = filter_tasks
+                    __ok__['data'] = {
+                        'tasks': filter_tasks
+                    }
                     return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -57,12 +65,16 @@ def task(request):
 
 
 @csrf_exempt
-def task_delivery_detail(request):
+def task_delivery_detail(request, task_id):
     if request.session.get('is_login', None) == True:
         if request.method == 'GET':
             try:
-                filter_delivery = models.Delivery.objects.filter(task_id = request.GET.task_id)
-                __ok__['delivery'] = filter_delivery
+                filter_delivery = models.Delivery.objects.filter(task_id = task_id)
+
+                __ok__['data'] = {
+                    'delivery': filter_delivery
+                }
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -72,16 +84,20 @@ def task_delivery_detail(request):
 
     
 @csrf_exempt
-def task_questionnaire_detail(request):
+def task_questionnaire_detail(request, task_id):
     if request.session.get('is_login', None) == True:
         if request.method == 'GET':
             try:
-                filter_questionnaire = models.Questionnaire.objects.filter(task_id = request.GET.task_id)
+                filter_questionnaire = models.Questionnaire.objects.filter(task_id = task_id)
 
                 filter_questions = models.Question.objects.filter(questionnaire_id = filter_questionnaire.questionnaire_id)
                 
                 filter_questionnaire['questions'] = filter_questions
-                __ok__['questionnaire'] = filter_questionnaire
+
+                __ok__['data'] = {
+                    'questionnaire': filter_questionnaire
+                }          
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -140,27 +156,25 @@ def task_delivery_complishment(request):
     else: 
         return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
 
-
-
 @csrf_exempt
-def task_delivery(request):
+def task_delivery_delete(request, task_id):
     if request.session.get('is_login', None) == True:
         if request.method == 'DELETE':
             try:
                 #从任务列表删除任务
-                get_task = models.Task.objects.get(task_id = request.DELETE.task_id)
+                get_task = models.Task.objects.get(task_id = task_id)
                 get_task.delete()
 
                 #从用户发布任务列表删除任务
-                get_publishTask = models.PublishTask.objects.get(task_id = request.DELETE.task_id)
+                get_publishTask = models.PublishTask.objects.get(task_id = task_id)
                 get_publishTask.delete()
                 
                 #从用户接取任务列表删除任务
-                get_pickTask = models.PickTask.objects.get(task_id = request.DELETE.task_id)
+                get_pickTask = models.PickTask.objects.get(task_id = task_id)
                 get_pickTask.delete()
 
                 #从递送列表删除任务
-                get_delivery = models.Delivery.objects.get(task_id = request.DELETE.task_id)
+                get_delivery = models.Delivery.objects.get(task_id = task_id)
                 get_delivery.delete()
 
                 #将钱退回给发布者
@@ -180,7 +194,14 @@ def task_delivery(request):
             except Exception as exc:
                 print(exc)
                 return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
-        elif request.method == 'POST':
+    else: 
+        return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
+
+
+@csrf_exempt
+def task_delivery(request):
+    if request.session.get('is_login', None) == True:
+        if request.method == 'POST':
             try:
                 #判断余额是否足够
                 get_user = models.User.objects.get(id = request.session.get('user_id'))
@@ -349,12 +370,12 @@ def task_questionnaire_answer(request):
 
 
 @csrf_exempt
-def task_questionnaire_answerSheet(request):
+def task_questionnaire_answerSheet(request, questionnaire_id):
     if request.session.get('is_login', None) == True:
         if request.method == 'GET':
             try:
                 #获取答卷
-                get_answerSheet = models.AnswerSheet.objects.get(questionnaire_id = request.GET.questionnaire_id, user_id = request.session.get('user_id')) 
+                get_answerSheet = models.AnswerSheet.objects.get(questionnaire_id = questionnaire_id, user_id = request.session.get('user_id')) 
                 
                 #获取答案
                 filter_answers = models.Answer.objects.filter(answerSheet_id = get_answerSheet.id)
@@ -368,7 +389,9 @@ def task_questionnaire_answerSheet(request):
                     ele['answer'] = i
                     answerSheet.append(ele)
 
-                __ok__['answerSheet'] = answerSheet
+                __ok__['data'] = {
+                    'answerSheet': answerSheet
+                }
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
@@ -380,14 +403,14 @@ def task_questionnaire_answerSheet(request):
 
 
 @csrf_exempt
-def task_questionnaire_Statistics(request):
+def task_questionnaire_Statistics(request, questionnaire_id):
     if request.session.get('is_login', None) == True:
         if request.method == 'GET':
             try:
                 statistics = []
 
                 #获取题目
-                filter_questions = models.Question.objects.filter(questionnaire_id = request.GET.questionnaire_id)  
+                filter_questions = models.Question.objects.filter(questionnaire_id = questionnaire_id)  
 
                 #统计答案
                 for i in filter_questions:
@@ -421,7 +444,10 @@ def task_questionnaire_Statistics(request):
                     ele['answer'] = answer 
                     statistics.append(ele)
 
-                __ok__['statistics'] = statistics
+                __ok__['data'] = {
+                    'statistics': statistics
+                }
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
