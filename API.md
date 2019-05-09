@@ -1,7 +1,7 @@
 # API
 XianYux闲余挣闲钱系统API文档
 
-**（涉及到手机验证码的API都不可用，而其它的API已完成，但未进行测试）**
+**（API已完成，但未进行测试）**
 
 - [API](#api)
 - [服务器IP和端口号](#%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3%E5%8F%B7)
@@ -19,7 +19,7 @@ XianYux闲余挣闲钱系统API文档
   - [用户退出登录](#%E7%94%A8%E6%88%B7%E9%80%80%E5%87%BA%E7%99%BB%E5%BD%95)
   - [获取当前用户的余额](#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E7%9A%84%E4%BD%99%E9%A2%9D)
   - [获得当前用户发布/领取的所有任务id和共同属性](#%E8%8E%B7%E5%BE%97%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8F%91%E5%B8%83%E9%A2%86%E5%8F%96%E7%9A%84%E6%89%80%E6%9C%89%E4%BB%BB%E5%8A%A1id%E5%92%8C%E5%85%B1%E5%90%8C%E5%B1%9E%E6%80%A7)
-  - [根据用户/关注的人/粉丝id获取用户信息(user_id/following_id/fan_id都适用)](#%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E5%85%B3%E6%B3%A8%E7%9A%84%E4%BA%BA%E7%B2%89%E4%B8%9Did%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AFuseridfollowingidfanid%E9%83%BD%E9%80%82%E7%94%A8)
+  - [根据用户/关注的人/粉丝id批量获取用户信息(user_id/following_id/fan_id都适用)](#%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E5%85%B3%E6%B3%A8%E7%9A%84%E4%BA%BA%E7%B2%89%E4%B8%9Did%E6%89%B9%E9%87%8F%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AFuseridfollowingidfanid%E9%83%BD%E9%80%82%E7%94%A8)
   - [当前用户关注其它用户](#%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%85%B3%E6%B3%A8%E5%85%B6%E5%AE%83%E7%94%A8%E6%88%B7)
   - [当前用户取关其它用户](#%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8F%96%E5%85%B3%E5%85%B6%E5%AE%83%E7%94%A8%E6%88%B7)
   - [获取当前用户关注的所有用户的id](#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%85%B3%E6%B3%A8%E7%9A%84%E6%89%80%E6%9C%89%E7%94%A8%E6%88%B7%E7%9A%84id)
@@ -51,7 +51,7 @@ XianYux闲余挣闲钱系统API文档
 # Session
 
 * 用户id: request.session['user_id']: integer
-* 登录状态: request.session['login']: bool
+* 登录状态: request.session['is_login']: bool
 
 
 
@@ -59,13 +59,13 @@ XianYux闲余挣闲钱系统API文档
 
 
 ## 向手机发送验证码
-> `GET /sms/verification_code`
+> `GET /sms/verification_code/{user_phone}`
 
 **参数**
 ```
-{
-    "user_phone":    string    //手机号
-}
+把 url 中的 {user_phone} 替换成 11 位数字手机号，如下所示：
+
+GET /sms/verification_code/15989061915
 ```
 
 **返回值**
@@ -167,7 +167,7 @@ XianYux闲余挣闲钱系统API文档
 
 
 ## 完善或修改当前用户的信息
-> `PUT /user/profile`
+> `POST /user/profile`
 
 **参数**
 ```
@@ -233,7 +233,7 @@ XianYux闲余挣闲钱系统API文档
         "user_phone":            string,     //手机号
         "user_icon":             string,     //头像，图片的byte数组转成字符串
         "user_balance":          integer,    //用户余额
-        "user_fillln":           integer     //是否填写了个人信息
+        "user_fillln":           integer     //是否填写了个人信息，1为已经填写，0为未填写
     },
     "student": {
         "student_id":            integer,    //学生id         
@@ -316,7 +316,7 @@ XianYux闲余挣闲钱系统API文档
 
 ## 找回密码-重置密码
 
-> `PUT /user/password`
+> `POST /user/password`
 
 **参数**
 ```
@@ -468,13 +468,15 @@ XianYux闲余挣闲钱系统API文档
 
 ## 获得当前用户发布/领取的所有任务id和共同属性
 
-> `GET /user/tasks`
+> `GET /user/tasks/{t_type}`
 
 **参数**	
 
 ```
 {
-    “type”:    integer    //类型，0为用户发布的，1为用户领取的
+    把 url 中的 {t_type} 替换成integer类型的 0 或 1 ，0为用户发布的，1为用户领取的,如下所示：
+
+    GET /user/tasks/1
 }
 ```
 
@@ -528,9 +530,9 @@ XianYux闲余挣闲钱系统API文档
 
 
 
-## 根据用户/关注的人/粉丝id获取用户信息(user_id/following_id/fan_id都适用)
+## 根据用户/关注的人/粉丝id批量获取用户信息(user_id/following_id/fan_id都适用)
 
-> `GET /user/information`
+> `POST /user/batch/information`
 
 
 **参数**
@@ -650,12 +652,14 @@ XianYux闲余挣闲钱系统API文档
 
 ## 当前用户取关其它用户
 
-> `DELETE /user/following`
+> `DELETE /user/following/{user_id}`
 
 **参数**
 ```
 {
-    "user_id":    integer    //要取关的其他用户的id
+    把 url 中的 {user_id} 替换成要取关的其他用户的 id，类型为 integer，如下所示：
+
+    DELETE /user/following/1
 }
 ```
 
@@ -1441,7 +1445,7 @@ XianYux闲余挣闲钱系统API文档
 
 ## 发布者截止问卷
 
-> `PUT /task/questionnaire/closure` 
+> `POST /task/questionnaire/closure` 
 
 **参数**
 

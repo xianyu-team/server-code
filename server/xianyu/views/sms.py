@@ -55,26 +55,20 @@ __notLogin__ = {
 
 # 增加装饰器，跳过csrf的保护，前端请求就不会被forbidden
 # 或者在前端做csrf保护请求方式
-
-xianyu_app_secret = '940441f4e010'
-xianyu_AppKey: '7a2d8351ad47c6310468f01ca4d18c5e'
-
 @csrf_exempt
-def sms_verification_code(request):
+def sms_verification_code(request, user_phone):
     """向手机发送验证码"""
     try:
         if request.method == 'GET':
-            parameters = request.GET
-
             sms_url = 'https://api.netease.im/sms/sendcode.action'
             post_data = {
-                'mobile': parameters['user_phone'],
+                'mobile': user_phone,
                 'templateid': 9734879
             }
 
             # 以下是网易云官网要求的headers
             cur_time = str(time.time())
-            app_secret = xianyu_app_secret
+            app_secret = '940441f4e010'
             nonce = str(uuid.uuid4())
 
             # 参数拼接
@@ -83,15 +77,16 @@ def sms_verification_code(request):
             check_sum = hashlib.new('sha1', post_param.encode('utf-8')).hexdigest()
 
             headers = {
-                'AppKey': xianyu_AppKey,
+                'AppKey': '7a2d8351ad47c6310468f01ca4d18c5e',
                 'Nonce': nonce,
                 'CurTime': cur_time,
                 'CheckSum': check_sum
             }
 
             response = requests.post(sms_url, data=post_data, headers=headers)
+            response_data = response.json()
 
-            if response['code'] == 200:
+            if response_data['code'] == 200:
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             else:
                 return HttpResponse(json.dumps(__failedSendVerification__), content_type='application/json', charset='utf-8')
@@ -115,7 +110,7 @@ def sms_verification(request):
 
             # 以下是网易云官网要求的headers
             cur_time = str(time.time())
-            app_secret = xianyu_app_secret
+            app_secret = '940441f4e010'
             nonce = str(uuid.uuid4())
 
             # 参数拼接
@@ -124,15 +119,16 @@ def sms_verification(request):
             check_sum = hashlib.new('sha1', post_param.encode('utf-8')).hexdigest()
 
             headers = {
-                'AppKey': xianyu_AppKey,
+                'AppKey': '7a2d8351ad47c6310468f01ca4d18c5e',
                 'Nonce': nonce,
                 'CurTime': cur_time,
                 'CheckSum': check_sum
             }
 
             response = requests.post(sms_url, data=post_data, headers=headers)
-
-            if response['code'] == 200:
+            response_data = response.json()
+            
+            if response_data['code'] == 200:
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             else:
                 return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')
