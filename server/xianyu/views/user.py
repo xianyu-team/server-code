@@ -15,10 +15,13 @@ import requests
 
 from xianyu import models
 
+# 注意data字段，因为__ok__是全局变量，所以每次返回时都要对data进行赋值，以覆盖原来的data值
 __ok__ = {
     'code': 200,
-    'message': 'OK'
+    'message': 'OK',
+    'data': {}
 }
+
 __error__ = {
     'code': 400,
     'message': '服务器发生错误'

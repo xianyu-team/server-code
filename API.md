@@ -73,7 +73,8 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code":       integer,    //状态码
-    "message":    string      //信息
+    "message":    string,     //信息
+    "data": {}                //数据，这里为空对象
 }
 ```
 
@@ -82,7 +83,8 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code": 200,
-    "message": "OK"
+    "message": "OK",
+    "data": {}
 }
 ```
 - 400
@@ -100,7 +102,7 @@ GET /sms/verification_code/15989061915
 ```
 {
     "user_phone":           string,    //手机号
-    "verification_code":    string     //验证码
+    "verification_code":    string,    //验证码
 }
 ```
 
@@ -108,7 +110,8 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code":       integer,    //状态码
-    "message":    string      //信息
+    "message":    string,     //信息
+    "data": {}                //数据，这里为空对象
 }
 ```
 
@@ -117,7 +120,8 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code": 200,
-    "message": "OK"
+    "message": "OK",
+    "data": {}
 }
 ```
 - 400
@@ -146,7 +150,8 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code":       integer,    //状态码
-    "message":    string      //信息
+    "message":    string,     //信息
+    "data": {}                //数据，这里为空对象
 }
 ```
 
@@ -155,7 +160,8 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code": 200,
-    "message": "OK"
+    "message": "OK",
+    "data": {}
 }
 ```
 - 400
@@ -185,7 +191,8 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code":       integer,    //状态码
-    "message":    string      //信息
+    "message":    string,     //信息
+    "data": {}                //数据，这里为空对象
 }
 ```
 
@@ -194,7 +201,8 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code": 200,
-    "message": "OK"
+    "message": "OK",
+    "data": {}
 }
 ```
 - 400
@@ -228,22 +236,24 @@ GET /sms/verification_code/15989061915
 {
     "code":                      integer,    //状态码
     "message":                   string,     //信息
-    "user": {
-        "user_id"                integer,    //用户id
-        "user_phone":            string,     //手机号
-        "user_icon":             string,     //头像，图片的byte数组转成字符串
-        "user_balance":          integer,    //用户余额
-        "user_fillln":           integer     //是否填写了个人信息，1为已经填写，0为未填写
-    },
-    "student": {
-        "student_id":            integer,    //学生id         
-        "user_id":               integer,    //学生对应的用户id
-        "student_number":        string,     //学号
-        "student_name":          string,     //真实姓名
-        "student_university":    string,     //学校
-        "student_academy":       string,     //学院
-        "student_gender":        integer     //性别，0为女，1为男
-    }   
+    "data": {
+        "user": {
+            "user_id"                integer,    //用户id
+            "user_phone":            string,     //手机号
+            "user_icon":             string,     //头像，图片的byte数组转成字符串
+            "user_balance":          integer,    //用户余额
+            "user_fillln":           integer     //是否填写了个人信息，1为已经填写，0为未填写
+        },
+        "student": {
+            "student_id":            integer,    //学生id         
+            "user_id":               integer,    //学生对应的用户id
+            "student_number":        string,     //学号
+            "student_name":          string,     //真实姓名
+            "student_university":    string,     //学校
+            "student_academy":       string,     //学院
+            "student_gender":        integer     //性别，0为女，1为男
+        }
+    }
 }
 ```
 
@@ -252,7 +262,9 @@ GET /sms/verification_code/15989061915
 ```
     "code": 200,
     "message": "OK,
-    ...  //省略
+    "data": {
+        ...  //省略
+    }
 ```
 - 400
 ```
@@ -286,7 +298,9 @@ GET /sms/verification_code/15989061915
 {
     "code":          integer,    //状态码
     "message":       string,     //信息
-    "user_fillln"    integer     //用户是否完善了个人信息，0为否，1为是
+    "data": {
+        "user_fillln"    integer     //用户是否完善了个人信息，0为否，1为是
+    } 
 }
 ```
 
@@ -296,7 +310,9 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK",
-    "user_fillln": 0
+    "data": {
+        "user_fillln": 0
+    }
 }
 ```
 - 400
@@ -331,7 +347,8 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code":       integer,    //状态码
-    "message":    string      //信息
+    "message":    string,     //信息
+    "data": {}                //数据，这里为空对象
 }
 ```
 
@@ -340,7 +357,8 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code": 200,
-    "message": "OK"
+    "message": "OK",
+    "data": {}
 }
 ```
 - 400
@@ -367,7 +385,9 @@ GET /sms/verification_code/15989061915
 {
     "code":          integer,    //状态码
     "message":       string,     //信息
-    "user_fillln"    integer     //用户是否完善了个人信息，0为否，1为是
+    "data": {
+        "user_fillln"    integer     //用户是否完善了个人信息，0为否，1为是
+    }
 }
 ```
 
@@ -376,8 +396,10 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code": 200,
-    "message": "OK"
-    "user_fillln": 0
+    "message": "OK",
+    "data": {
+        "user_fillln": 0
+    }
 }
 ```
 - 400
@@ -399,7 +421,8 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code":       integer,    //状态码
-    "message":    string      //信息
+    "message":    string,     //信息
+    "data": {}                //数据，这里为空对象
 }
 ```
 
@@ -408,7 +431,8 @@ GET /sms/verification_code/15989061915
 ```
 {
     "code": 200,
-    "message": "OK"
+    "message": "OK",
+    "data": {}
 }
 ```
 - 400
@@ -438,7 +462,9 @@ GET /sms/verification_code/15989061915
 {
     "code":            integer,    //状态码
     "message":         string,     //信息
-    "user_balance":    integer     //用户闲余币
+    "data": {
+        "user_balance":    integer     //用户闲余币
+    }
 }
 ```
 
@@ -449,7 +475,9 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK",
-    "user_balance": 100
+    "data": {
+        "user_balance": 100
+    }
 }
 ```
 - 400
@@ -486,16 +514,18 @@ GET /sms/verification_code/15989061915
 {
     "code":                    integer,    
     "message":                 string,
-    "tasks": [
-        {
-            "task_id":             integer,    //任务id
-            "user_id":             integer,    //发布者id
-            "task_type":           integer,    //任务类型，0为拿快递和外卖，1为填问卷
-            "task_sketch":         string,     //任务简述
-            "task_bonus":          integer,    //任务酬劳
-            "task_publishDate":    string      //发布日期
-        }
-    ]
+    "data": {
+        "tasks": [
+            {
+                "task_id":             integer,    //任务id
+                "user_id":             integer,    //发布者id
+                "task_type":           integer,    //任务类型，0为拿快递和外卖，1为填问卷
+                "task_sketch":         string,     //任务简述
+                "task_bonus":          integer,    //任务酬劳
+                "task_publishDate":    string      //发布日期
+            }
+        ]
+    }
 }
 ```
 
@@ -506,11 +536,13 @@ GET /sms/verification_code/15989061915
 {
     "code":                    integer,    
     "message":                 string,
-    "tasks": [
-        {
-            //省略...
-        }
-    ]
+    "data": {
+        "tasks": [
+            {
+                //省略...
+            }
+        ]
+    }
 }
 ```
 - 400
@@ -553,26 +585,28 @@ GET /sms/verification_code/15989061915
 {
     "code":                              integer,    //状态码
     "message":                           string,     //信息
-    "users": [
-        {
-            "user": {
-                "user_id"                integer,    //用户id
-                "user_phone":            string,     //手机号
-                "user_icon":             string,     //头像，图片的byte数组转成字符串
-                "user_balance":          integer,    //用户余额
-                "user_fillln":           integer     //是否填写了个人信息
-            },
-            "student": {
-                "student_id":            integer,    //学生id      
-                "user_id":               integer,    //学生对应的用户id   
-                "student_number":        string,     //学号
-                "student_name":          string,     //真实姓名
-                "student_university":    string,     //学校
-                "student_academy":       string,     //学院
-                "student_gender":        integer     //性别，0为女，1为男
-            }  
-        }   
-    ]
+    "data": {
+        "users": [
+            {
+                "user": {
+                    "user_id"                integer,    //用户id
+                    "user_phone":            string,     //手机号
+                    "user_icon":             string,     //头像，图片的byte数组转成字符串
+                    "user_balance":          integer,    //用户余额
+                    "user_fillln":           integer     //是否填写了个人信息
+                },
+                "student": {
+                    "student_id":            integer,    //学生id      
+                    "user_id":               integer,    //学生对应的用户id   
+                    "student_number":        string,     //学号
+                    "student_name":          string,     //真实姓名
+                    "student_university":    string,     //学校
+                    "student_academy":       string,     //学院
+                    "student_gender":        integer     //性别，0为女，1为男
+                }  
+            }   
+        ]
+    }
 }
 ```
 
@@ -584,11 +618,13 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK",
-    "users": [
-        {
-            //省略...
-        }
-    ]
+    "data": {
+        "users": [
+            {
+                //省略...
+            }
+        ]
+    }
 }
 ```
 
@@ -624,6 +660,7 @@ GET /sms/verification_code/15989061915
 {
     "code":       integer,    //状态码
     "message":    string,     //信息
+    "data": {}                //数据，这里为空对象
 }
 ```
 
@@ -634,6 +671,7 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK",
+    "data": {}
 }
 ```
 - 400
@@ -669,6 +707,7 @@ GET /sms/verification_code/15989061915
 {
     "code":       integer,    //状态码
     "message":    string,     //信息
+    "data": {}                //数据，这里为空对象
 }
 ```
 
@@ -679,6 +718,7 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK",
+    "data": {}
 }
 ```
 - 400
@@ -710,11 +750,13 @@ GET /sms/verification_code/15989061915
 {
     "code":             integer,    //状态码
     "message":          string,     //信息
-    "followings": [
-        {
-            "following_id":    integer     //元素是当前用户关注的用户的id
-        }
-    ]
+    "data": {
+        "followings": [
+            {
+                "following_id":    integer     //元素是当前用户关注的用户的id
+            }
+        ]
+    }
 }
 ```
 
@@ -725,15 +767,17 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK",
-    "followings": [
-        {
-            "following_id": 5    
-        }
-        {
-            "following_id": 12    
-        }
-        ...
-    ]
+    "data": {
+        "followings": [
+            {
+                "following_id": 5    
+            }
+            {
+                "following_id": 12    
+            }
+            ...
+        ]
+    }
 }
 ```
 - 400
@@ -763,11 +807,13 @@ GET /sms/verification_code/15989061915
 {
     "code":             integer,    //状态码
     "message":          string,     //信息
-    "fans": [
-        {
-            "fan_id":    integer     //元素是用户的粉丝的id
-        }
-    ]
+    "data": {
+        "fans": [
+            {
+                "fan_id":    integer     //元素是用户的粉丝的id
+            }
+        ]
+    }
 }
 ```
 
@@ -777,15 +823,17 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK",
-    "fans": [
-        {
-            "fan_id": 5    
-        }
-        {
-            "fan_id": 12    
-        }
-        ...
-    ]
+    "data": {
+        "fans": [
+            {
+                "fan_id": 5    
+            }
+            {
+                "fan_id": 12    
+            }
+            ...
+        ]
+    }
 }
 ```
 - 400
