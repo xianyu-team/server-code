@@ -8,7 +8,10 @@ from xianyu import models
 
 __ok__ = {
     'code': 200,
-    'message': 'OK'
+    'message': 'OK',
+    "data": {
+
+    }
 }
 __error__ = {
     'code': 400,
@@ -115,6 +118,7 @@ def task_acceptance(request):
                 pickTask.user_id = request.session.get('user_id')
                 pickTask.task_id = request.POST.task_id
                 pickTask.save()
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -148,7 +152,7 @@ def task_delivery_complishment(request):
                 bill.bill_number = get_task.task_bonus
                 bill.bill_description = '完成任务: ' + get_task.task_sketch
                 bill.save()
-
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -189,7 +193,7 @@ def task_delivery_delete(request, task_id):
                 bill.bill_number = get_task.task_bonus
                 bill.bill_description = '取消任务: ' + get_task.task_sketch
                 bill.save()
-
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -239,7 +243,7 @@ def task_delivery(request):
                 delivery.task_id = task.id
                 delivery.delivery_detail = request.POST.delivery.delivery_detail
                 delivery.save()
-
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -300,7 +304,7 @@ def task_questionnaire(request):
                     question.question_c = i.question_c
                     question.question_d = i.question_d
                     question.save()
-
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -359,7 +363,7 @@ def task_questionnaire_answer(request):
                 bill.bill_number = get_task.task_bonus
                 bill.bill_description = '填写问卷: ' + get_task.task_sketch
                 bill.save()
-
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -460,16 +464,16 @@ def task_questionnaire_Statistics(request, questionnaire_id):
 @csrf_exempt
 def task_questionnaire_closure(request):
     if request.session.get('is_login', None) == True:
-        if request.method == 'PUT':
+        if request.method == 'POST':
             try:
                 #问卷截止
-                get_questionnaire = models.Questionnaire.objects.get(id = request.PUT.questionnaire_id)
+                get_questionnaire = models.Questionnaire.objects.get(id = request.POST.questionnaire_id)
                 get_questionnaire.questionnaire_closed = 1
                 get_questionnaire.questionnaire_deadline = strftime('%Y-%m-%d %H:%M:%S',localtime())
                 get_questionnaire.save()
 
                 #若问卷还有多余的
-                get_questionnaire = models.Questionnaire.objects.get(id = request.PUT.questionnaire_id)
+                get_questionnaire = models.Questionnaire.objects.get(id = request.POST.questionnaire_id)
                 if get_questionnaire.questionnaire_number > 0:
                     #将钱退给发布者
                     get_task = models.Task.objects.get(id = get_questionnaire.task_id)
@@ -485,7 +489,7 @@ def task_questionnaire_closure(request):
                     bill.bill_number = get_task.task_bonus
                     bill.bill_description = '多余问卷退回: ' + get_task.task_sketch
                     bill.save()
-
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
