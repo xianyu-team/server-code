@@ -296,10 +296,10 @@ GET /sms/verification_code/15989061915
 
 ```
 {
-    "code":          integer,    //状态码
-    "message":       string,     //信息
+    "code":               integer,    //状态码
+    "message":            string,     //信息
     "data": {
-        "user_fillln"    integer     //用户是否完善了个人信息，0为否，1为是
+        "user_fillln":    integer     //用户是否完善了个人信息，0为否，1为是
     } 
 }
 ```
@@ -383,10 +383,10 @@ GET /sms/verification_code/15989061915
 **返回值**
 ```
 {
-    "code":          integer,    //状态码
-    "message":       string,     //信息
+    "code":               integer,    //状态码
+    "message":            string,     //信息
     "data": {
-        "user_fillln"    integer     //用户是否完善了个人信息，0为否，1为是
+        "user_fillln":    integer     //用户是否完善了个人信息，0为否，1为是
     }
 }
 ```
@@ -460,8 +460,8 @@ GET /sms/verification_code/15989061915
 **返回值**
 ```
 {
-    "code":            integer,    //状态码
-    "message":         string,     //信息
+    "code":                integer,    //状态码
+    "message":             string,     //信息
     "data": {
         "user_balance":    integer     //用户闲余币
     }
@@ -512,8 +512,8 @@ GET /sms/verification_code/15989061915
 
 ```
 {
-    "code":                    integer,    
-    "message":                 string,
+    "code":                            integer,    
+    "message":                         string,
     "data": {
         "tasks": [
             {
@@ -534,8 +534,8 @@ GET /sms/verification_code/15989061915
 - 200
 ```
 {
-    "code":                    integer,    
-    "message":                 string,
+    "code": 200,    
+    "message": "OK",
     "data": {
         "tasks": [
             {
@@ -583,8 +583,8 @@ GET /sms/verification_code/15989061915
 
 ```
 {
-    "code":                              integer,    //状态码
-    "message":                           string,     //信息
+    "code":                                  integer,    //状态码
+    "message":                               string,     //信息
     "data": {
         "users": [
             {
@@ -748,8 +748,8 @@ GET /sms/verification_code/15989061915
 
 ```
 {
-    "code":             integer,    //状态码
-    "message":          string,     //信息
+    "code":                        integer,    //状态码
+    "message":                     string,     //信息
     "data": {
         "followings": [
             {
@@ -805,8 +805,8 @@ GET /sms/verification_code/15989061915
 **返回值**
 ```
 {
-    "code":             integer,    //状态码
-    "message":          string,     //信息
+    "code":                  integer,    //状态码
+    "message":               string,     //信息
     "data": {
         "fans": [
             {
