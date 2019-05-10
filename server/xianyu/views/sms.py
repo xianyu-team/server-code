@@ -15,7 +15,8 @@ from xianyu import models
 
 __ok__ = {
     'code': 200,
-    'message': 'OK'
+    'message': 'OK',
+    'data': {}
 }
 __error__ = {
     'code': 400,
