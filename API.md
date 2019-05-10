@@ -1497,7 +1497,7 @@ GET /sms/verification_code/15989061915
 
 ## 发布者截止问卷
 
-> `POST /task/questionnaire/closure` 
+> `PUT /task/questionnaire/closure` 
 
 **参数**
 
