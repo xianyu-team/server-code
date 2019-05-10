@@ -13,6 +13,7 @@ import requests
 
 from xianyu import models
 
+# 注意data字段，因为__ok__是全局变量，所以每次返回时都要对data进行赋值，以覆盖原来的data值
 __ok__ = {
     'code': 200,
     'message': 'OK',
@@ -88,6 +89,9 @@ def sms_verification_code(request, user_phone):
             response_data = response.json()
 
             if response_data['code'] == 200:
+                data = {}
+                __ok__['data'] = data
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             else:
                 return HttpResponse(json.dumps(__failedSendVerification__), content_type='application/json', charset='utf-8')
@@ -130,6 +134,9 @@ def sms_verification(request):
             response_data = response.json()
             
             if response_data['code'] == 200:
+                data = {}
+                __ok__['data'] = data
+                
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             else:
                 return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')

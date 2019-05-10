@@ -130,6 +130,9 @@ def user(request):
                     request.session['user_id'] = new_user.user_id
                     request.session['is_login'] = True
 
+                    data = {}
+                    __ok__['data'] = data
+
                     return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
                 else:
                     return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')
@@ -179,29 +182,34 @@ def user_profile(request):
                     get_student.student_gender = parameters['student_gender']
                     get_student.save()
 
+                    data = {}
+                    __ok__['data'] = data
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             elif request.method == 'GET':
                 get_user = models.User.objects.get(user_id=request.session['user_id'])
                 get_student = models.Student.objects.get(user_id=request.session['user_id'])
 
-                __ok__['user'] = {
-                    'user_id': get_user.user_id,
-                    'user_phone': get_user.user_phone,
-                    # 数据库里存的是图片的byte数组，需要转sting再传给前端
-                    'user_icon': str(get_user.user_icon, encoding='utf-8'),
-                    'user_balance': get_user.user_balance,
-                    'user_fillln': get_user.user_fillln
+                data = {
+                    'user': {
+                        'user_id': get_user.user_id,
+                        'user_phone': get_user.user_phone,
+                        # 数据库里存的是图片的byte数组，需要转sting再传给前端
+                        'user_icon': str(get_user.user_icon, encoding='utf-8'),
+                        'user_balance': get_user.user_balance,
+                        'user_fillln': get_user.user_fillln
+                    },
+                    'student': {
+                        'student_id': get_student.student_id,
+                        'user_id': get_student.user_id,
+                        'student_number': get_student.student_number,
+                        'student_name': get_student.student_name,
+                        'student_university': get_student.student_university,
+                        'student_academy': get_student.student_academy,
+                        'student_gender': get_student.student_gender
+                    }
                 }
-
-                __ok__['student'] = {
-                    'student_id': get_student.student_id,
-                    'user_id': get_student.user_id,
-                    'student_number': get_student.student_number,
-                    'student_name': get_student.student_name,
-                    'student_university': get_student.student_university,
-                    'student_academy': get_student.student_academy,
-                    'student_gender': get_student.student_gender
-                }
+                __ok__['data'] = data
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
@@ -230,7 +238,11 @@ def user_password_session(request):
                     request.session['user_id'] = get_user.user_id
                     request.session['is_login'] = True
 
-                    __ok__['user_fillln'] = get_user.user_fillln
+                    data = {
+                        'user_fillln': get_user.user_fillln
+                    }
+                    __ok__['data'] = data
+
                     return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
     except Exception as exc:
         print(exc)
@@ -250,6 +262,11 @@ def user_password(request):
                 get_user = models.User.objects.get(user_phone=parameters['user_phone'])
                 get_user.user_password = parameters['user_password']
                 get_user.save()
+
+                data = {}
+                __ok__['data'] = data
+
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             else:
                 return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')
     except Exception as exc:
@@ -272,7 +289,11 @@ def user_sms_session(request):
                 request.session['user_id'] = get_user.user_id
                 request.session['is_login'] = True
 
-                __ok__['user_fillln'] = get_user.user_fillln
+                data = {
+                    'user_fillln': get_user.user_fillln
+                }
+                __ok__['data'] = data
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             else:
                 return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')
@@ -290,6 +311,9 @@ def user_session(request):
                 del request.session['user_id']
                 del request.session['is_login']
 
+                data = {}
+                __ok__['data'] = data
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
             return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
@@ -304,7 +328,11 @@ def user_balance(request):
     try:
         if request.session.get('is_login', None):
             get_user = models.User.objects.get(user_id=request.session['user_id'])
-            __ok__['user_balance'] = get_user.user_balance
+            
+            data = {
+                'user_balance': get_user.user_balance
+            }
+            __ok__['data'] = data
 
             return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
@@ -337,7 +365,11 @@ def user_tasks(request, t_type):
                         'task_bonus': get_task.task_bonus,
                         'task_publishDate': strftime('%Y-%m-%d %H:%M:%S', get_task.task_publishDate)
                     })
-                __ok__['tasks'] = tasks
+
+                data = {
+                    'tasks': tasks
+                }
+                __ok__['data'] = data
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
@@ -378,7 +410,11 @@ def user_batch_information(request):
                             'student_gender': get_student.student_gender
                         }
                     })
-                __ok__['users'] = users
+
+                data = {
+                    'users': users
+                }
+                __ok__['data'] = data
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
@@ -416,6 +452,9 @@ def user_following_post(request):
                     )
                     new_fan.save()
 
+                data = {}
+                __ok__['data'] = data
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
             return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
@@ -433,16 +472,19 @@ def user_following_delete(request, user_id):
                 # 删除following表条目
                 filter_following_dict = {
                     'user_id': request.session['user_id'],
-                    'following_id': parameters['user_id']
+                    'following_id': user_id
                 }
                 models.Following.objects.filter(**filter_following_dict).delete()
 
                 # 删除fan表条目
                 filter_fan_fict = {
-                    'user_id': parameters['user_id'],
+                    'user_id': user_id,
                     'fan_id': request.session['user_id']
                 }
                 models.Fan.objects.filter(**filter_fan_fict).delete()
+
+                data = {}
+                __ok__['data'] = data
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             else:
@@ -464,7 +506,11 @@ def user_followings(request):
                     followings.append({
                         'following_id': filter_following.following_id
                     })
-                __ok__['followings'] = followings
+
+                data = {
+                    'followings': followings
+                }
+                __ok__['data'] = data
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
@@ -486,7 +532,11 @@ def user_fans(request):
                     fans.append({
                         'fan_id': filter_fan.fan_id
                     })
-                __ok__['fans'] = fans
+                
+                data = {
+                    'fans': fans
+                }
+                __ok__['data'] = data
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
         else:
