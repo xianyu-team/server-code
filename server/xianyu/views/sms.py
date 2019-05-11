@@ -105,7 +105,7 @@ def sms_verification(request):
     """验证手机验证码"""
     try:
         if request.method == 'POST':
-            parameters = request.POST
+            parameters = json.loads(request.body)
 
             sms_url = 'https://api.netease.im/sms/verifycode.action'
             post_data = {
