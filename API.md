@@ -5,6 +5,7 @@ XianYux闲余挣闲钱系统API文档
 
 - [API](#api)
 - [服务器IP和端口号](#%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3%E5%8F%B7)
+- [前端请求参数的数据类型](#%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
 - [Session](#session)
 - [手机短信](#%E6%89%8B%E6%9C%BA%E7%9F%AD%E4%BF%A1)
   - [向手机发送验证码](#%E5%90%91%E6%89%8B%E6%9C%BA%E5%8F%91%E9%80%81%E9%AA%8C%E8%AF%81%E7%A0%81)
@@ -47,6 +48,9 @@ XianYux闲余挣闲钱系统API文档
 - Port : 8000
 
 
+# 前端请求参数的数据类型
+- 前端的请求参数为`json`类型，在请求的header中设置为`application/json`
+
 
 # Session
 
@@ -54,9 +58,7 @@ XianYux闲余挣闲钱系统API文档
 * 登录状态: request.session['is_login']: bool
 
 
-
 # 手机短信
-
 
 ## 向手机发送验证码
 > `GET /sms/verification_code/{user_phone}`
@@ -173,7 +175,7 @@ GET /sms/verification_code/15989061915
 
 
 ## 完善或修改当前用户的信息
-> `POST /user/profile`
+> `PUT /user/profile`
 
 **参数**
 ```
@@ -332,7 +334,7 @@ GET /sms/verification_code/15989061915
 
 ## 找回密码-重置密码
 
-> `POST /user/password`
+> `PUT /user/password`
 
 **参数**
 ```
@@ -511,6 +513,8 @@ GET /sms/verification_code/15989061915
 **返回值**
 
 ```
+// 返回的结果按发布时间从大到小排序，即最新发布的任务存储在tasks数组前面
+
 {
     "code":                            integer,    
     "message":                         string,
@@ -690,14 +694,12 @@ GET /sms/verification_code/15989061915
 
 ## 当前用户取关其它用户
 
-> `DELETE /user/following/{user_id}`
+> `DELETE /user/following`
 
 **参数**
 ```
 {
-    把 url 中的 {user_id} 替换成要取关的其他用户的 id，类型为 integer，如下所示：
-
-    DELETE /user/following/1
+    "user_id":    integer    //要取关的其他用户的id
 }
 ```
 

@@ -7,7 +7,7 @@ class User(models.Model):
     user_phone = models.CharField(max_length=11)
     user_password = models.CharField(max_length=20)
     user_icon = models.BinaryField(default=None, null=True)
-    user_balance = models.FloatField(default=0.0)
+    user_balance = models.IntegerField(default=0)
     user_fillln = models.SmallIntegerField(default=0)
 
 
@@ -17,7 +17,7 @@ class Student(models.Model):
     user_id = models.IntegerField()
     student_number = models.IntegerField()
     student_name = models.CharField(max_length=20)
-    student_university = models.CharField(max_length=50) 
+    student_university = models.CharField(max_length=50)
     student_academy = models.CharField(max_length=50)
     student_gender = models.SmallIntegerField(default=0)
 

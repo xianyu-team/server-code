@@ -111,7 +111,7 @@ def user(request):
     """用户注册"""
     try:
         if request.method == 'POST':
-            parameters = request.POST
+            parameters = json.loads(request.body)
 
             # 先检查手机号是否唯一
             # 获取多个对象用filter
@@ -148,8 +148,8 @@ def user_profile(request):
     """POST为完善或修改当前用户信息，GET为获取当前用户信息"""
     try:
         if request.session.get('is_login', None):
-            if request.method == 'POST':
-                parameters = request.POST
+            if request.method == 'PUT':
+                parameters = json.loads(request.body)
 
                 # 获取单个对象用get
                 get_user = models.User.objects.get(user_id=request.session['user_id'])
@@ -224,7 +224,7 @@ def user_password_session(request):
     """密码登录"""
     try:
         if request.method == 'POST':
-            parameters = request.POST
+            parameters = json.loads(request.body)
 
             filter_user = models.User.objects.filter(user_phone=parameters['user_phone'])
             if filter_user.__len__() == 0:
@@ -253,8 +253,8 @@ def user_password_session(request):
 def user_password(request):
     """找回密码-重置密码"""
     try:
-        if request.method == 'POST':
-            parameters = request.POST
+        if request.method == 'PUT':
+            parameters = json.loads(request.body)
 
             is_verified = _verify_phone_code_(parameters['user_phone'], parameters['verification_code'])
 
@@ -279,7 +279,7 @@ def user_sms_session(request):
     """用户短信登录"""
     try:
         if request.method == 'POST':
-            parameters = request.POST
+            parameters = json.loads(request.body)
 
             is_verified = _verify_phone_code_(parameters['user_phone'], parameters['verification_code'])
 
@@ -328,7 +328,7 @@ def user_balance(request):
     try:
         if request.session.get('is_login', None):
             get_user = models.User.objects.get(user_id=request.session['user_id'])
-            
+
             data = {
                 'user_balance': get_user.user_balance
             }
@@ -349,6 +349,8 @@ def user_tasks(request, t_type):
         if request.session.get('is_login', None):
             if request.method == 'GET':
                 # 0为用户发布的，1为用户领取的
+                filter_tasks = set()
+
                 if t_type == 0:
                     filter_tasks = models.PublishTask.objects.filter(user_id=request.session['user_id'])
                 elif t_type == 1:
@@ -365,6 +367,9 @@ def user_tasks(request, t_type):
                         'task_bonus': get_task.task_bonus,
                         'task_publishDate': strftime('%Y-%m-%d %H:%M:%S', get_task.task_publishDate)
                     })
+
+                # 给tasks对象数组按发布时间逆序排序，即最新的放在数组前面
+                tasks.sort(key=lambda task: -task['task_publishDate'])
 
                 data = {
                     'tasks': tasks
@@ -385,11 +390,12 @@ def user_batch_information(request):
     try:
         if request.session.get('is_login', None):
             if request.method == 'POST':
-                parameters = request.POST
+                parameters = json.loads(request.body)
 
                 users = []
                 for user_id_object in parameters['user_ids']:
                     get_user = models.User.objects.get(user_id=user_id_object['user_id'])
+                    # 若用户user_fillln为0，则没有student信息，此时get抛错，可以返回“服务器错误”信息，没影响
                     get_student = models.Student.objects.get(user_id=user_id_object['user_id'])
 
                     users.append({
@@ -425,12 +431,13 @@ def user_batch_information(request):
 
 
 @csrf_exempt
-def user_following_post(request):
+def user_following(request):
     """POST为当前用户关注其它用户，DELETE为当前用户取关其它用户"""
     try:
         if request.session.get('is_login', None):
             if request.method == 'POST':
-                parameters = request.POST
+                parameters = json.loads(request.body)
+
                 filter_dict = {
                     'user_id': request.session['user_id'],
                     'following_id': parameters['user_id']
@@ -456,29 +463,19 @@ def user_following_post(request):
                 __ok__['data'] = data
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
-        else:
-            return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
-    except Exception as exc:
-        print(exc)
-        return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+            elif request.method == 'DELETE':
+                parameters = json.loads(request.body)
 
-
-@csrf_exempt
-def user_following_delete(request, user_id):
-    """POST为当前用户关注其它用户，DELETE为当前用户取关其它用户"""
-    try:
-        if request.session.get('is_login', None):
-            if request.method == 'DELETE':
                 # 删除following表条目
                 filter_following_dict = {
                     'user_id': request.session['user_id'],
-                    'following_id': user_id
+                    'following_id': parameters['user_id']
                 }
                 models.Following.objects.filter(**filter_following_dict).delete()
 
                 # 删除fan表条目
                 filter_fan_fict = {
-                    'user_id': user_id,
+                    'user_id': parameters['user_id'],
                     'fan_id': request.session['user_id']
                 }
                 models.Fan.objects.filter(**filter_fan_fict).delete()
@@ -487,8 +484,8 @@ def user_following_delete(request, user_id):
                 __ok__['data'] = data
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
-            else:
-                return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
+        else:
+            return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
     except Exception as exc:
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
@@ -532,7 +529,7 @@ def user_fans(request):
                     fans.append({
                         'fan_id': filter_fan.fan_id
                     })
-                
+
                 data = {
                     'fans': fans
                 }
