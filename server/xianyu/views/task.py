@@ -204,7 +204,8 @@ def task_delivery_delete(request, task_id):
 
 @csrf_exempt
 def task_delivery(request):
-    if request.session.get('is_login', None) == True:
+    #print(request.session.get('is_login'))
+    if request.session.get('is_login', None):
         if request.method == 'POST':
             try:
                 #判断余额是否足够
