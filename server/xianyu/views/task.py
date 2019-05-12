@@ -8,7 +8,10 @@ from xianyu import models
 
 __ok__ = {
     'code': 200,
-    'message': 'OK'
+    'message': 'OK',
+    "data": {
+
+    }
 }
 __error__ = {
     'code': 400,
@@ -37,11 +40,11 @@ def task(request,  t_type):
                 #关注的用户发布的任务
                 elif t_type == 1:     
                     #获取关注的用户
-                    filter_followers = models.Follower.objects.filter(id = request.session.get('user_id'))
+                    filter_fans = models.Fan.objects.filter(user_id = request.session.get('user_id'))
                     tasks = []
                     #获取关注的用户发布的任务
-                    for i in filter_followers:
-                        filter_tasks = models.Task.objects.filter(user_id = i.follower_id)
+                    for i in filter_fans:
+                        filter_tasks = models.Task.objects.filter(user_id = i.fan_id)
                         tasks.append(filter_tasks)
 
                     __ok__['data'] = {
@@ -113,8 +116,9 @@ def task_acceptance(request):
             try:
                 pickTask = models.PickTask()
                 pickTask.user_id = request.session.get('user_id')
-                pickTask.task_id = request.POST.task_id
+                pickTask.task_id = request.body.task_id
                 pickTask.save()
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -129,15 +133,15 @@ def task_delivery_complishment(request):
         if request.method == 'POST':
             try:
                 #将递送设置为已完成
-                get_delivery = models.Delivery.objects.get(task_id = request.POST.task_id)
+                get_delivery = models.Delivery.objects.get(task_id = request.body.task_id)
                 get_delivery.delivery_complished = 1
                 get_delivery.delivery_complishDate = strftime('%Y-%m-%d %H:%M:%S',localtime())
                 get_delivery.save()
 
                 #将钱给任务领取者
-                get_task = models.Task.objects.get(task_id = request.POST.task_id)
+                get_task = models.Task.objects.get(task_id = request.body.task_id)
 
-                get_user = models.User.objects.get(id = request.session.get('user_id'))
+                get_user = models.User.objects.get(user_id = request.session.get('user_id'))
                 get_user.user_balance += get_task.task_bonus
                 get_user.save()
 
@@ -148,7 +152,7 @@ def task_delivery_complishment(request):
                 bill.bill_number = get_task.task_bonus
                 bill.bill_description = '完成任务: ' + get_task.task_sketch
                 bill.save()
-
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -178,7 +182,7 @@ def task_delivery_delete(request, task_id):
                 get_delivery.delete()
 
                 #将钱退回给发布者
-                get_user = models.User.objects.get(id = request.session.get('user_id'))
+                get_user = models.User.objects.get(user_id = request.session.get('user_id'))
                 get_user.user_balance += get_task.task_bonus
                 get_user.save()
 
@@ -189,7 +193,7 @@ def task_delivery_delete(request, task_id):
                 bill.bill_number = get_task.task_bonus
                 bill.bill_description = '取消任务: ' + get_task.task_sketch
                 bill.save()
-
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -200,32 +204,33 @@ def task_delivery_delete(request, task_id):
 
 @csrf_exempt
 def task_delivery(request):
-    if request.session.get('is_login', None) == True:
+    #print(request.session.get('is_login'))
+    if request.session.get('is_login', None):
         if request.method == 'POST':
             try:
                 #判断余额是否足够
-                get_user = models.User.objects.get(id = request.session.get('user_id'))
-                if get_user.user_balance < request.POST.task.task_bonus:
+                get_user = models.User.objects.get(user_id = request.session.get('user_id'))
+                if get_user.user_balance < request.body.task.task_bonus:
                     __error__['message'] = '余额不足'
                     return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
                 #任务发布者扣除钱
-                get_user.user_balance -= request.POST.task.task_bonus
+                get_user.user_balance -= request.body.task.task_bonus
                 get_user.save()
 
                 #给任务发布者添加一条账单
                 bill = models.Bill()
                 bill.user_id = request.session.get('user_id')
                 bill.bill_type = 1
-                bill.bill_number = request.POST.task.task_bonus
-                bill.bill_description = '发布任务: ' + request.POST.task.task_sketch
+                bill.bill_number = request.body.task.task_bonus
+                bill.bill_description = '发布任务: ' + request.body.task.task_sketch
                 bill.save()
 
                 #任务列表添加任务
                 task = models.Task()
-                task.task_type = request.POST.task.task_type
-                task.task_sketch = request.POST.task.task_sketch
-                task.task_bonus = request.POST.task.task_bonus
+                task.task_type = request.body.task.task_type
+                task.task_sketch = request.body.task.task_sketch
+                task.task_bonus = request.body.task.task_bonus
                 task.save()
 
                 #用户发布列表添加任务
@@ -237,9 +242,9 @@ def task_delivery(request):
                 #递送列表添加递送
                 delivery = models.Delivery()
                 delivery.task_id = task.id
-                delivery.delivery_detail = request.POST.delivery.delivery_detail
+                delivery.delivery_detail = request.body.delivery.delivery_detail
                 delivery.save()
-
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -254,28 +259,28 @@ def task_questionnaire(request):
         if request.method == 'POST':
             try:
                 #判断余额是否足够
-                get_user = models.User.objects.get(id = request.session.get('user_id'))
-                if get_user.user_balance < request.POST.task.task_bonus * request.POST.questionnaire.questionnaire_number:
+                get_user = models.User.objects.get(user_id = request.session.get('user_id'))
+                if get_user.user_balance < request.body.task.task_bonus * request.body.questionnaire.questionnaire_number:
                     __error__['message'] = '余额不足'
                     return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
                 #任务发布者扣除钱
-                get_user.user_balance -= request.POST.task.task_bonus * request.POST.questionnaire.questionnaire_number
+                get_user.user_balance -= request.body.task.task_bonus * request.body.questionnaire.questionnaire_number
                 get_user.save()
 
                 #给任务发布者添加一条账单
                 bill = models.Bill()
                 bill.user_id = request.session.get('user_id')
                 bill.bill_type = 1
-                bill.bill_number = request.POST.task.task_bonus * request.POST.questionnaire.questionnaire_number
-                bill.bill_description = '发布问卷: ' + request.POST.task.task_sketch
+                bill.bill_number = request.body.task.task_bonus * request.body.questionnaire.questionnaire_number
+                bill.bill_description = '发布问卷: ' + request.body.task.task_sketch
                 bill.save()
 
                 #任务列表添加任务
                 task = models.Task()
-                task.task_type = request.POST.task.task_type
-                task.task_sketch = request.POST.task.task_sketch
-                task.task_bonus = request.POST.task.task_bonus
+                task.task_type = request.body.task.task_type
+                task.task_sketch = request.body.task.task_sketch
+                task.task_bonus = request.body.task.task_bonus
                 task.save()
 
                 #用户发布列表添加任务
@@ -287,10 +292,10 @@ def task_questionnaire(request):
                 #问卷列表添加问卷
                 questionnaire = models.Questionnaire()
                 questionnaire.task_id = task.id
-                questionnaire_number = request.POST.questionnaire.questionnaire_number
+                questionnaire_number = request.body.questionnaire.questionnaire_number
 
                 #题目列表添加题目
-                for i in request.POST.questionnaire.questions:
+                for i in request.body.questionnaire.questions:
                     question = models.Question()
                     question.questionnaire_id = questionnaire.questionnaire_id 
                     question.question_description = i.question_description
@@ -300,7 +305,7 @@ def task_questionnaire(request):
                     question.question_c = i.question_c
                     question.question_d = i.question_d
                     question.save()
-
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -315,24 +320,24 @@ def task_questionnaire_answer(request):
         if request.method == 'POST':
             try:
                  #将问卷份数减一
-                get_questionnaire = models.Questionnaire.objects.get(questionnaire_id = request.POST.questionnaire_id) 
+                get_questionnaire = models.Questionnaire.objects.get(questionnaire_id = request.body.questionnaire_id) 
                 get_questionnaire.questionnaire_number -= 1
                 get_questionnaire.save()
 
                 #若问卷份数为0, 问卷停止
-                get_questionnaire = models.Questionnaire.objects.get(questionnaire_id = request.POST.questionnaire_id) 
+                get_questionnaire = models.Questionnaire.objects.get(questionnaire_id = request.body.questionnaire_id) 
                 if get_questionnaire.questionnaire_number == 0:
                     get_questionnaire.questionnaire_closed = 1
                     get_questionnaire.questionnaire_deadline = strftime('%Y-%m-%d %H:%M:%S',localtime())
 
                 #添加答卷
                 answerSheet = models.AnswerSheet()
-                answerSheet.questionnaire_id = request.POST.questionnaire_id
+                answerSheet.questionnaire_id = request.body.questionnaire_id
                 answerSheet.user_id = request.session.get('user_id')
                 answerSheet.save()
 
                 #添加答案
-                for i in request.POST.answers:
+                for i in request.body.answers:
                     answer = models.Answer()
                     answer.answerSheet_id = answerSheet.id
                     answer.question_id = i.question_id
@@ -348,7 +353,7 @@ def task_questionnaire_answer(request):
                 #将钱给问卷填写者
                 get_task = models.Task.objects.get(task_id = get_questionnaire.task_id)
 
-                get_user = models.User.objects.get(id = request.session.get('user_id'))
+                get_user = models.User.objects.get(user_id = request.session.get('user_id'))
                 get_user.user_balance += get_task.task_bonus
                 get_user.save()
 
@@ -359,7 +364,7 @@ def task_questionnaire_answer(request):
                 bill.bill_number = get_task.task_bonus
                 bill.bill_description = '填写问卷: ' + get_task.task_sketch
                 bill.save()
-
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -384,7 +389,7 @@ def task_questionnaire_answerSheet(request, questionnaire_id):
                 answerSheet = []
                 for i in filter_answers:
                     ele = {}
-                    get_question = models.Question.objects.get(id = i.question_id)
+                    get_question = models.Question.objects.get(question_id = i.question_id)
                     ele['question'] = get_question
                     ele['answer'] = i
                     answerSheet.append(ele)
@@ -463,18 +468,18 @@ def task_questionnaire_closure(request):
         if request.method == 'PUT':
             try:
                 #问卷截止
-                get_questionnaire = models.Questionnaire.objects.get(id = request.PUT.questionnaire_id)
+                get_questionnaire = models.Questionnaire.objects.get(questionnaire_id = request.body.questionnaire_id)
                 get_questionnaire.questionnaire_closed = 1
                 get_questionnaire.questionnaire_deadline = strftime('%Y-%m-%d %H:%M:%S',localtime())
                 get_questionnaire.save()
 
                 #若问卷还有多余的
-                get_questionnaire = models.Questionnaire.objects.get(id = request.PUT.questionnaire_id)
+                get_questionnaire = models.Questionnaire.objects.get(questionnaire_id = request.body.questionnaire_id)
                 if get_questionnaire.questionnaire_number > 0:
                     #将钱退给发布者
-                    get_task = models.Task.objects.get(id = get_questionnaire.task_id)
+                    get_task = models.Task.objects.get(task_id = get_questionnaire.task_id)
 
-                    get_user = models.User.objects.get(id = request.session.get('user_id'))
+                    get_user = models.User.objects.get(user_id = request.session.get('user_id'))
                     get_user.user_balance += get_questionnaire.questionnaire_number * get_task.task_bonus
                     get_user.save()
 
@@ -485,7 +490,7 @@ def task_questionnaire_closure(request):
                     bill.bill_number = get_task.task_bonus
                     bill.bill_description = '多余问卷退回: ' + get_task.task_sketch
                     bill.save()
-
+                __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)

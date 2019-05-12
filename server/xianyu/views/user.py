@@ -242,7 +242,6 @@ def user_password_session(request):
                         'user_fillln': get_user.user_fillln
                     }
                     __ok__['data'] = data
-
                     return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
     except Exception as exc:
         print(exc)
