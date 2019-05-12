@@ -1232,13 +1232,30 @@ GET /sms/verification_code/15989061915
         "task_type":                integer,    //订单类型，0为拿快递和外卖，1为问卷
         "task_sketch":              string      //任务简述
         "task_bonus":               integer,    //悬赏金额
-        "task_publishDate":         string,     //发布时间  
+        "task_publishDate":         string,     //发布时间, 格式为YYYY-MM-DD HH:MM:SS    
     }
     "delivery" {
         "delivery_detail":          string,     //递送任务详情
-        "delivery_picked":          string      //是否被接取
-        "delivery_complished":      integer,    //是否完成，0为否，1为是
-        "delivery_complishDate":    string      //完成时间  
+        "delivery_picked":          string      //是否被接取, 0为否，1为是
+        "delivery_complished":      integer,    //是否完成, 0为否，1为是
+        "delivery_complishDate":    string      //完成时间, 格式为YYYY-MM-DD HH:MM:SS  
+    }
+   
+}
+```
+
+**参数示例**
+
+```
+{
+    "task": {
+        "task_type":                0,
+        "task_sketch":              "帮忙拿快递",
+        "task_bonus":               1,
+        "task_publishDate":         "2019-05-12 20:58:30"  
+    },
+    "delivery": {
+        "delivery_detail":          "菜鸟驿站5号柜包裹码xxxx-xxxx"
     }
    
 }
