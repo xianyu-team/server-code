@@ -40,11 +40,11 @@ def task(request,  t_type):
                 #关注的用户发布的任务
                 elif t_type == 1:     
                     #获取关注的用户
-                    filter_followers = models.Follower.objects.filter(id = request.session.get('user_id'))
+                    filter_fans = models.Fan.objects.filter(user_id = request.session.get('user_id'))
                     tasks = []
                     #获取关注的用户发布的任务
-                    for i in filter_followers:
-                        filter_tasks = models.Task.objects.filter(user_id = i.follower_id)
+                    for i in filter_fans:
+                        filter_tasks = models.Task.objects.filter(user_id = i.fan_id)
                         tasks.append(filter_tasks)
 
                     __ok__['data'] = {
@@ -141,7 +141,7 @@ def task_delivery_complishment(request):
                 #将钱给任务领取者
                 get_task = models.Task.objects.get(task_id = request.body.task_id)
 
-                get_user = models.User.objects.get(id = request.session.get('user_id'))
+                get_user = models.User.objects.get(user_id = request.session.get('user_id'))
                 get_user.user_balance += get_task.task_bonus
                 get_user.save()
 
@@ -182,7 +182,7 @@ def task_delivery_delete(request, task_id):
                 get_delivery.delete()
 
                 #将钱退回给发布者
-                get_user = models.User.objects.get(id = request.session.get('user_id'))
+                get_user = models.User.objects.get(user_id = request.session.get('user_id'))
                 get_user.user_balance += get_task.task_bonus
                 get_user.save()
 
@@ -209,7 +209,7 @@ def task_delivery(request):
         if request.method == 'POST':
             try:
                 #判断余额是否足够
-                get_user = models.User.objects.get(id = request.session.get('user_id'))
+                get_user = models.User.objects.get(user_id = request.session.get('user_id'))
                 if get_user.user_balance < request.body.task.task_bonus:
                     __error__['message'] = '余额不足'
                     return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
@@ -259,7 +259,7 @@ def task_questionnaire(request):
         if request.method == 'POST':
             try:
                 #判断余额是否足够
-                get_user = models.User.objects.get(id = request.session.get('user_id'))
+                get_user = models.User.objects.get(user_id = request.session.get('user_id'))
                 if get_user.user_balance < request.body.task.task_bonus * request.body.questionnaire.questionnaire_number:
                     __error__['message'] = '余额不足'
                     return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
@@ -353,7 +353,7 @@ def task_questionnaire_answer(request):
                 #将钱给问卷填写者
                 get_task = models.Task.objects.get(task_id = get_questionnaire.task_id)
 
-                get_user = models.User.objects.get(id = request.session.get('user_id'))
+                get_user = models.User.objects.get(user_id = request.session.get('user_id'))
                 get_user.user_balance += get_task.task_bonus
                 get_user.save()
 
@@ -389,7 +389,7 @@ def task_questionnaire_answerSheet(request, questionnaire_id):
                 answerSheet = []
                 for i in filter_answers:
                     ele = {}
-                    get_question = models.Question.objects.get(id = i.question_id)
+                    get_question = models.Question.objects.get(question_id = i.question_id)
                     ele['question'] = get_question
                     ele['answer'] = i
                     answerSheet.append(ele)
@@ -468,18 +468,18 @@ def task_questionnaire_closure(request):
         if request.method == 'PUT':
             try:
                 #问卷截止
-                get_questionnaire = models.Questionnaire.objects.get(id = request.body.questionnaire_id)
+                get_questionnaire = models.Questionnaire.objects.get(questionnaire_id = request.body.questionnaire_id)
                 get_questionnaire.questionnaire_closed = 1
                 get_questionnaire.questionnaire_deadline = strftime('%Y-%m-%d %H:%M:%S',localtime())
                 get_questionnaire.save()
 
                 #若问卷还有多余的
-                get_questionnaire = models.Questionnaire.objects.get(id = request.body.questionnaire_id)
+                get_questionnaire = models.Questionnaire.objects.get(questionnaire_id = request.body.questionnaire_id)
                 if get_questionnaire.questionnaire_number > 0:
                     #将钱退给发布者
-                    get_task = models.Task.objects.get(id = get_questionnaire.task_id)
+                    get_task = models.Task.objects.get(task_id = get_questionnaire.task_id)
 
-                    get_user = models.User.objects.get(id = request.session.get('user_id'))
+                    get_user = models.User.objects.get(user_id = request.session.get('user_id'))
                     get_user.user_balance += get_questionnaire.questionnaire_number * get_task.task_bonus
                     get_user.save()
 
