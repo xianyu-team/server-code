@@ -57,6 +57,23 @@ __notLogin__ = {
 
 # 增加装饰器，跳过csrf的保护，前端请求就不会被forbidden
 # 或者在前端做csrf保护请求方式
+
+
+@csrf_exempt
+def sms_verification_code(request, user_phone):
+    """向手机发送验证码"""
+    try:
+        __notavailable__ = {
+            'code': 400,
+            'message': "短信验证码服务暂时关闭"
+        }
+
+        return HttpResponse(json.dumps(__notavailable__), content_type='application/json', charset='utf-8')
+    except Exception as exc:
+        print(exc)
+        return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+
+'''
 @csrf_exempt
 def sms_verification_code(request, user_phone):
     """向手机发送验证码"""
@@ -98,6 +115,7 @@ def sms_verification_code(request, user_phone):
     except Exception as exc:
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+'''
 
 
 @csrf_exempt
