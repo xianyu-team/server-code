@@ -204,7 +204,6 @@ def task_delivery_delete(request, task_id):
 
 @csrf_exempt
 def task_delivery(request):
-    #print(request.session.get('is_login'))
     if request.session.get('is_login', None):
         if request.method == 'POST':
             try:
