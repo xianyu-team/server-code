@@ -876,8 +876,8 @@ GET /sms/verification_code/15989061915
 所以前端获取关于任务的信息时，必须先获取任务的共同属性，得到该任务的类型（递送任务或问卷任务），然后再根据递送任务或问卷任务的API获取特殊的信息。
 
 ## 获取任务大厅的所有任务id和共同属性
-> `GET /task`/{t_type}
-
+> `GET /task/{t_type}`
+`已测试`
 **参数**	
 
 ```
@@ -902,7 +902,7 @@ GET /sms/verification_code/15989061915
                 "task_type":            string,     //任务类型，0为拿快递和外卖，1为问卷
                 "task_sketch":          string,     //任务简介
                 "task_bonus":           integer,    //悬赏金额
-                "task_publishDate"      string      //发布时间，#格式为YYYY-MM-DD HH:MM:SS
+                "task_publishDate":     string      //发布时间，#格式为YYYY-MM-DD HH:MM:SS
             }
         ]   
     }
@@ -942,7 +942,7 @@ GET /sms/verification_code/15989061915
 ## 根据任务id获取拿快递和外卖的详细信息
 
 > `GET /task/delivery/detail/{task_id}`
-
+`已测试`
 **参数**	
 
 ```
@@ -1220,8 +1220,8 @@ GET /sms/verification_code/15989061915
 ```
 
 
-## 新建一个拿快递和外卖的任务(发布者把钱给平台)
-
+## 新建一个拿快递和外卖的任务(发布者把钱寄存在平台上, 当任务完成, 平台将钱给完成者)
+`已测试`
 > `POST /task/delivery` 
 
 **参数**
@@ -1232,13 +1232,9 @@ GET /sms/verification_code/15989061915
         "task_type":                integer,    //订单类型，0为拿快递和外卖，1为问卷
         "task_sketch":              string      //任务简述
         "task_bonus":               integer,    //悬赏金额
-        "task_publishDate":         string,     //发布时间, 格式为YYYY-MM-DD HH:MM:SS    
     }
     "delivery" {
         "delivery_detail":          string,     //递送任务详情
-        "delivery_picked":          string      //是否被接取, 0为否，1为是
-        "delivery_complished":      integer,    //是否完成, 0为否，1为是
-        "delivery_complishDate":    string      //完成时间, 格式为YYYY-MM-DD HH:MM:SS  
     }
    
 }
@@ -1251,13 +1247,11 @@ GET /sms/verification_code/15989061915
     "task": {
         "task_type":                0,
         "task_sketch":              "帮忙拿快递",
-        "task_bonus":               1,
-        "task_publishDate":         "2019-05-12 20:58:30"  
+        "task_bonus":               1
     },
     "delivery": {
         "delivery_detail":          "菜鸟驿站5号柜包裹码xxxx-xxxx"
     }
-   
 }
 ```
 
@@ -1302,7 +1296,7 @@ GET /sms/verification_code/15989061915
 ```
 
 ## 新建一个问卷任务(发布者把钱给平台)
-
+`已测试`
 > `POST /task/questionnaire` 
 
 **参数**
@@ -1313,11 +1307,8 @@ GET /sms/verification_code/15989061915
         "task_type":                       string,     //订单类型，0为拿快递和外卖，1为问卷
         "task_sketch":                     string      //任务简述
         "task_bonus":                      integer,    //悬赏金额
-        "task_publishDate":                string,     //发布时间  
-    }
+    },
     "questionnaire": {
-        "questionnaire_closed":            integer,    //是否截止
-        "questionnaire_deadline":          string,     //截止时间
         "questionnaire_number":			   integer,	   //打算发布的问卷份数(task_bonus * questionnaire_number = 总金额)
         "questions": [
             {
@@ -1330,6 +1321,39 @@ GET /sms/verification_code/15989061915
             }
         ]
     }   
+}
+```
+
+**参数示例**
+
+```
+{
+    "task": {
+        "task_type":                1,
+        "task_sketch":              "大学生运动爱好调查",
+        "task_bonus":               1 
+    },
+    "questionnaire": {
+        "questionnaire_number":			   2,	 
+        "questions": [
+            {
+                "question_description":    "你的姓名",
+                "question_type":           2,
+                "question_a":              "",
+                "question_b":              "",
+                "question_c":              "",
+                "question_d":              ""
+            },
+            {
+                "question_description":    "你喜欢什么运动?",
+                "question_type":           1,
+                "question_a":              "篮球",     
+                "question_b":              "羽毛球",    
+                "question_c":              "乒乓球",    
+                "question_d":              "排球"     
+            }
+        ]
+    }
 }
 ```
 

@@ -30,8 +30,20 @@ def bill(request):
         if request.method == 'GET':
             try:
                 filter_bills = models.Bill.objects.filter(user_id = request.session.get('user_id'))
+
+                # 将QuerySet转换为数组
+                bills = []
+                for i in filter_bills: 
+                    bills.append({
+                        "bill_id":              i.bill_id,
+                        "user_id":              i.user_id,
+                        "bill_type":            i.bill_type,
+                        "bill_number":          i.bill_number,
+                        "bill_description":     i.bill_description,
+                        "bill_time":            i.bill_time
+                    })
                 __ok__['data'] = {
-                    'bills': filter_bills
+                    'bills': bills
                 }
                 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
