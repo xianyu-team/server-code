@@ -73,7 +73,7 @@ class Delivery(models.Model):
     delivery_detail = models.CharField(max_length=100)
     delivery_picked = models.SmallIntegerField(default=0)    #0代表未接取, 1代表接取
     delivery_complished = models.SmallIntegerField(default=0)    #0代表未完成, 1代表完成
-    delivery_complishDate = models.DateTimeField(auto_now=True)
+    delivery_complishDate = models.DateTimeField(default=None, null=True)
 
 
 #问卷
@@ -81,7 +81,7 @@ class Questionnaire(models.Model):
     questionnaire_id = models.AutoField(primary_key=True)
     task_id = models.IntegerField()
     questionnaire_closed = models.SmallIntegerField(default=0)      #0代表未截止, 1代表截止
-    questionnaire_deadline = models.DateTimeField(auto_now=True)                 #格式为YYYY-MM-DD HH:MM:SS
+    questionnaire_deadline = models.DateTimeField(default=None, null=True)                 #格式为YYYY-MM-DD HH:MM:SS
     questionnaire_number = models.IntegerField(default=0)
 
 

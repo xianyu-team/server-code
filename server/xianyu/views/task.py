@@ -46,7 +46,7 @@ def task(request, t_type):
                             "task_type": i.task_type,
                             "task_sketch": i.task_sketch,
                             "task_bonus": i.task_bonus,
-                            "task_publishDate": (i.task_publishDate + datetime.timedelta(hours = 8)).strftime('%Y-%m-%d %H:%M:%S')  # 将取出来的UTC时间转换为北京时间
+                            "task_publishDate": i.task_publishDate.strftime('%Y-%m-%d %H:%M:%S')  
                         })
 
                     __ok__['data'] = {
@@ -79,7 +79,7 @@ def task(request, t_type):
                             "task_type": i.task_type,
                             "task_sketch": i.task_sketch,
                             "task_bonus": i.task_bonus,
-                            "task_publishDate": (i.task_publishDate + datetime.timedelta(hours = 8)).strftime('%Y-%m-%d %H:%M:%S')  # 将取出来的UTC时间转换为北京时间
+                            "task_publishDate": i.task_publishDate.strftime('%Y-%m-%d %H:%M:%S')  
                         })
 
                     __ok__['data'] = {
@@ -100,7 +100,7 @@ def task(request, t_type):
                             "task_type": i.task_type,
                             "task_sketch": i.task_sketch,
                             "task_bonus": i.task_bonus,
-                            "task_publishDate": (i.task_publishDate + datetime.timedelta(hours = 8)).strftime('%Y-%m-%d %H:%M:%S')  # 将取出来的UTC时间转换为北京时间
+                            "task_publishDate": i.task_publishDate.strftime('%Y-%m-%d %H:%M:%S')  
                         })
 
                     __ok__['data'] = {
@@ -125,7 +125,14 @@ def task_delivery_detail(request, t_id):
                 get_delivery = models.Delivery.objects.get(task_id = t_id)
 
                 __ok__['data'] = {
-                    'delivery': get_delivery
+                    'delivery': {
+                        "delivery_id":              get_delivery.delivery_id,
+                        "task_id":                  get_delivery.task_id,
+                        "delivery_detail":          get_delivery.delivery_detail,
+                        "delivery_picked":          get_delivery.delivery_picked,
+                        "delivery_complished":      get_delivery.delivery_complished,
+                        "delivery_complishDate":    get_delivery.delivery_complished if (get_delivery.delivery_complished == 0) else get_delivery.delivery_complishDate.strftime('%Y-%m-%d %H:%M:%S')  
+                    }
                 }
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
@@ -146,7 +153,7 @@ def task_questionnaire_detail(request, t_id):
             try:
                 get_questionnaire = models.Questionnaire.objects.get(task_id = t_id)
 
-                filter_questions = models.Question.objects.filter(questionnaire_id = filter_questionnaire['questionnaire_id'])
+                filter_questions = models.Question.objects.filter(questionnaire_id = get_questionnaire.questionnaire_id)
                 
                 # 将QuerySet转换为数组
                 questions = []
@@ -161,10 +168,15 @@ def task_questionnaire_detail(request, t_id):
                         "question_c":               i.question_c,
                         "question_d":               i.question_d
                     })
-                get_questionnaire['questions'] = questions
 
                 __ok__['data'] = {
-                    'questionnaire': get_questionnaire
+                    'questionnaire': {              
+                        "questionnaire_id":         get_questionnaire.questionnaire_id,        
+                        "task_id":                  get_questionnaire.task_id,     
+                        "questionnaire_closed":     get_questionnaire.questionnaire_closed,
+                        "questionnaire_deadline":   get_questionnaire.questionnaire_deadline if (get_questionnaire.questionnaire_closed == 0) else get_questionnaire.questionnaire_deadline.strftime('%Y-%m-%d %H:%M:%S'),  
+                        "questions":                questions
+                    }
                 }          
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
@@ -182,10 +194,17 @@ def task_acceptance(request):
             try:
                 parameters = json.loads(request.body)
 
+                # 接取任务列表中添加任务
                 pickTask = models.PickTask()
                 pickTask.user_id = request.session.get('user_id')
                 pickTask.task_id = parameters['task_id']
                 pickTask.save()
+
+                # 将递送设置为已接取
+                get_delivery = models.Delivery.objects.get(task_id = parameters['task_id'])
+                get_delivery.delivery_picked = 1
+                get_delivery.save()
+
                 __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
@@ -220,7 +239,7 @@ def task_delivery_complishment(request):
                 bill.user_id = request.session.get('user_id')
                 bill.bill_type = 0
                 bill.bill_number = get_task.task_bonus
-                bill.bill_description = '完成任务: ' + get_task.task_sketch
+                bill.bill_description = '完成跑腿任务: ' + get_task.task_sketch
                 bill.save()
                 __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
@@ -247,8 +266,10 @@ def task_delivery_delete(request, t_id):
                 get_publishTask.delete()
                 
                 #从用户接取任务列表删除任务
-                get_pickTask = models.PickTask.objects.get(task_id = t_id)
-                get_pickTask.delete()
+                filter_pickTask = models.PickTask.objects.filter(task_id = t_id)
+                #如果有用户接取该任务
+                if filter_pickTask.__len__() != 0:
+                    filter_pickTask.delete()
 
                 #从递送列表删除任务
                 get_delivery = models.Delivery.objects.get(task_id = t_id)
@@ -264,7 +285,7 @@ def task_delivery_delete(request, t_id):
                 bill.user_id = request.session.get('user_id')
                 bill.bill_type = 0
                 bill.bill_number = get_task.task_bonus
-                bill.bill_description = '取消任务: ' + get_task.task_sketch
+                bill.bill_description = '取消跑腿任务:' + get_task.task_sketch
                 bill.save()
                 __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
@@ -297,7 +318,7 @@ def task_delivery(request):
                 bill.user_id = request.session.get('user_id')
                 bill.bill_type = 1
                 bill.bill_number = parameters['task']['task_bonus']
-                bill.bill_description = '发布任务: ' + parameters['task']['task_sketch']
+                bill.bill_description = '发布跑腿任务:' + parameters['task']['task_sketch'] 
                 bill.save()
 
                 #任务列表添加任务
@@ -350,7 +371,7 @@ def task_questionnaire(request):
                 bill.user_id = request.session.get('user_id')
                 bill.bill_type = 1
                 bill.bill_number = parameters['task']['task_bonus'] * parameters['questionnaire']['questionnaire_number']
-                bill.bill_description = '发布问卷: ' + parameters['task']['task_sketch']
+                bill.bill_description = '发布问卷:' + parameters['task']['task_sketch'] 
                 bill.save()
 
                 #任务列表添加任务
@@ -402,14 +423,14 @@ def task_questionnaire_answer(request):
 
                  #将问卷份数减一
                 get_questionnaire = models.Questionnaire.objects.get(questionnaire_id = parameters['questionnaire_id']) 
-                get_questionnaire.questionnaire_number -= 1
+                get_questionnaire.questionnaire_number =  get_questionnaire.questionnaire_number - 1
                 get_questionnaire.save()
 
                 #若问卷份数为0, 问卷停止
-                get_questionnaire = models.Questionnaire.objects.get(questionnaire_id = parameters['questionnaire_id']) 
                 if get_questionnaire.questionnaire_number == 0:
                     get_questionnaire.questionnaire_closed = 1
                     get_questionnaire.questionnaire_deadline = strftime('%Y-%m-%d %H:%M:%S', localtime())
+                    get_questionnaire.save()
 
                 #添加答卷
                 answerSheet = models.AnswerSheet()
@@ -420,7 +441,7 @@ def task_questionnaire_answer(request):
                 #添加答案
                 for i in parameters['answers']:
                     answer = models.Answer()
-                    answer.answerSheet_id = answerSheet.id
+                    answer.answerSheet_id = answerSheet.answerSheet_id
                     answer.question_id = i['question_id']
                     answer.answer_content = i['answer_content']
                     answer.save()
@@ -443,7 +464,7 @@ def task_questionnaire_answer(request):
                 bill.user_id = request.session.get('user_id')
                 bill.bill_type = 0
                 bill.bill_number = get_task.task_bonus
-                bill.bill_description = '填写问卷: ' + get_task.task_sketch
+                bill.bill_description = '填写问卷:' + get_task.task_sketch 
                 bill.save()
                 __ok__['data'] = {}
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
@@ -467,15 +488,29 @@ def task_questionnaire_answerSheet(request, q_id):
                 get_answerSheet = models.AnswerSheet.objects.get(questionnaire_id = q_id, user_id = request.session.get('user_id')) 
                 
                 #获取答案
-                filter_answers = models.Answer.objects.filter(answerSheet_id = get_answerSheet.id)
+                filter_answers = models.Answer.objects.filter(answerSheet_id = get_answerSheet.answerSheet_id)
 
                 #获取题目
                 answerSheet = []
                 for i in filter_answers:
                     ele = {}
                     get_question = models.Question.objects.get(question_id = i.question_id)
-                    ele['question'] = get_question
-                    ele['answer'] = i
+                    ele['question'] = {
+                        "question_id":              get_question.question_id,
+                        "questionnaire_id":         get_question.questionnaire_id,
+                        "question_description":     get_question.question_description,
+                        "question_type":            get_question.question_type,
+                        "question_a":               get_question.question_a,
+                        "question_b":               get_question.question_b,
+                        "question_c":               get_question.question_c,
+                        "question_d":               get_question.question_d
+                    }
+                    ele['answer'] = {               
+                        "answer_id":                i.answer_id,
+                        "answerSheet_id":           i.answerSheet_id,
+                        "question_id":              i.question_id,
+                        "answer_content":           i.answer_content
+                    }
                     answerSheet.append(ele)
 
                 __ok__['data'] = {
@@ -494,7 +529,7 @@ def task_questionnaire_answerSheet(request, q_id):
 @csrf_exempt
 def task_questionnaire_Statistics(request, q_id):
     # 将q_id转为int型
-    q_id = int(qe_id)
+    q_id = int(q_id)
 
     if request.session.get('is_login', None) == True:
         if request.method == 'GET':
@@ -507,33 +542,52 @@ def task_questionnaire_Statistics(request, q_id):
                 #统计答案
                 for i in filter_questions:
                     ele = {}
-                    ele['question'] = i 
-                    answer_gap_filling = []
-                    answer = {
-                        "answer_a_count": 0,
-                        "answer_b_count": 0,
-                        "answer_c_count": 0,
-                        "answer_d_count": 0,
-                        "answer_gap_filling" : answer_gap_filling
+                    ele['question'] = {
+                        "question_id":              i.question_id,
+                        "questionnaire_id":         i.questionnaire_id,
+                        "question_description":     i.question_description,
+                        "question_type":            i.question_type,
+                        "question_a":               i.question_a,
+                        "question_b":               i.question_b,
+                        "question_c":               i.question_c,
+                        "question_d":               i.question_d
                     }
-                    filter_answers = models.Answer.objects.filter(question_id = i.id) 
+                    
+                    answer_a_count = 0
+                    answer_b_count = 0
+                    answer_c_count = 0
+                    answer_d_count = 0
+                    answer_gap_filling = []
+
+                    filter_answers = models.Answer.objects.filter(question_id = i.question_id) 
+
                     for j in filter_answers:
                         #填空题
                         if i.question_type == 2:
-                            answer_gap_filling.append(j)
+                            answer_gap_filling.append({
+                                "gap_filling_content":    j.answer_content
+                            })
                         #选择题
                         else:
                             #解析答案
                             for c in j.answer_content:
+                                print(c)
                                 if c == 'A':    
-                                    answer["answer_a_count"] += 1 
+                                    answer_a_count = answer_a_count + 1 
                                 if c == 'B':    
-                                    answer["answer_b_count"] += 1 
+                                    answer_b_count = answer_b_count + 1 
                                 if c == 'C':    
-                                    answer["answer_c_count"] += 1 
+                                    answer_c_count = answer_c_count + 1 
                                 if c == 'D':    
-                                    answer["answer_d_count"] += 1 
-                    ele['answer'] = answer 
+                                    answer_d_count = answer_d_count + 1 
+
+                    ele['answer'] = {
+                        "answer_a_count":   answer_a_count,
+                        "answer_b_count":   answer_b_count,
+                        "answer_c_count":   answer_c_count,
+                        "answer_d_count":   answer_d_count,
+                        "answer_gap_filling" : answer_gap_filling
+                    }
                     statistics.append(ele)
 
                 __ok__['data'] = {
