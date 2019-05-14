@@ -7,7 +7,7 @@ class User(models.Model):
     user_phone = models.CharField(max_length=11)
     user_password = models.CharField(max_length=20)
     user_icon = models.BinaryField(default=None, null=True)
-    user_balance = models.IntegerField(default=0)
+    user_balance = models.IntegerField(default=100)
     user_fillln = models.SmallIntegerField(default=0)
 
 
@@ -73,7 +73,7 @@ class Delivery(models.Model):
     delivery_detail = models.CharField(max_length=100)
     delivery_picked = models.SmallIntegerField(default=0)    #0代表未接取, 1代表接取
     delivery_complished = models.SmallIntegerField(default=0)    #0代表未完成, 1代表完成
-    delivery_complishDate = models.DateTimeField()
+    delivery_complishDate = models.DateTimeField(auto_now=True)
 
 
 #问卷
@@ -81,7 +81,7 @@ class Questionnaire(models.Model):
     questionnaire_id = models.AutoField(primary_key=True)
     task_id = models.IntegerField()
     questionnaire_closed = models.SmallIntegerField(default=0)      #0代表未截止, 1代表截止
-    questionnaire_deadline = models.DateTimeField()                 #格式为YYYY-MM-DD HH:MM:SS
+    questionnaire_deadline = models.DateTimeField(auto_now=True)                 #格式为YYYY-MM-DD HH:MM:SS
     questionnaire_number = models.IntegerField(default=0)
 
 
