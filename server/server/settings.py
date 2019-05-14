@@ -112,11 +112,11 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+USE_TZ = False
+
 USE_I18N = True
 
 USE_L10N = True
-
-USE_TZ = True
 
 # url的尾部不要加斜杠，避免url匹配错误
 APPEND_SLASH = False
