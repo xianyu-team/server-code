@@ -40,7 +40,7 @@ def bill(request):
                         "bill_type":            i.bill_type,
                         "bill_number":          i.bill_number,
                         "bill_description":     i.bill_description,
-                        "bill_time":            i.bill_time
+                        "bill_time":            i.bill_time.strftime('%Y-%m-%d %H:%M:%S')
                     })
                 __ok__['data'] = {
                     'bills': bills

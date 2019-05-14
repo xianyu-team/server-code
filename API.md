@@ -1002,7 +1002,7 @@ GET /sms/verification_code/15989061915
 ## 根据任务id获取问卷和题目的详细信息
 
 > `GET /task/questionnaire/detail/{task_id}`
-
+`已测试`
 **参数**	
 
 ```
@@ -1065,10 +1065,10 @@ GET /sms/verification_code/15989061915
 ```
 
 
-## 接受任务
+## 接受一个跑腿的任务(前端需要判断任务是否是自己发布的, 是否有人领取了, 是否取消了)
 
 > `POST /task/acceptance`
-
+`已测试`
 **参数**
 
 ```
@@ -1119,7 +1119,7 @@ GET /sms/verification_code/15989061915
 ## 完成拿快递和外卖的任务(平台把钱给领取者)
 
 > `POST /task/delivery/complishment` 
-
+`已测试`
 **参数**
 
 ```
@@ -1172,10 +1172,10 @@ GET /sms/verification_code/15989061915
 
 
 
-## 发布者取消拿快递和外卖的任务(钱退回给发布者)
+## 发布者取消拿快递和外卖的任务(钱退回给发布者)(前端需要保证只能取消未完成的任务)
 
 > `DELETE /task/delivery/{task_id}` 
-
+`已测试`
 **参数**	
 
 ```
@@ -1236,7 +1236,6 @@ GET /sms/verification_code/15989061915
     "delivery" {
         "delivery_detail":          string,     //递送任务详情
     }
-   
 }
 ```
 
@@ -1392,10 +1391,10 @@ GET /sms/verification_code/15989061915
     "message": "用户未登录"
 ```
 
-## 填写者提交问卷的答案
+## 填写者提交问卷的答案(前端需要保证只填写未截止的问卷)
 
 > `POST /task/questionnaire/answer` 
-
+`已测试`
 **参数**
 
 ```
@@ -1405,6 +1404,24 @@ GET /sms/verification_code/15989061915
         {
             "question_id":    integer,    //题目id
             "answer_content":    string    //答案，单选示例"A",多选示例"ABD",填空示例"watchcat2k"
+        }
+    ]
+}
+```
+
+**参数示例**
+
+```
+{
+    "questionnaire_id":    1,
+    "answers": [
+        {
+            "question_id":    1,
+            "answer_content": "CoderUtil"
+        },
+        {
+            "question_id":    2,
+            "answer_content": "AB"
         }
     ]
 }
@@ -1448,7 +1465,7 @@ GET /sms/verification_code/15989061915
 ## 填写者获取自己填写过的答卷(包含题目和答案)
 
 > `GET /task/questionnaire/answerSheet/{questionnaire_id}` 
-
+`已测试`
 **参数**	
 
 ```
@@ -1475,7 +1492,7 @@ GET /sms/verification_code/15989061915
                     "question_b":              string,
                     "question_c":              string,
                     "question_d":              string,
-                }
+                },
                 "answer": {
                     "answer_id":               integer,    //答案id
                     "answerSheet_id":          integer,    //答卷id
@@ -1515,7 +1532,7 @@ GET /sms/verification_code/15989061915
 ## 发布者查看问卷的统计信息
 
 > `GET /task/questionnaire/Statistics/{questionnaire_id}` 
-
+`已测试`
 **参数**
 
 ```
@@ -1589,7 +1606,7 @@ GET /sms/verification_code/15989061915
 ## 发布者截止问卷
 
 > `PUT /task/questionnaire/closure` 
-
+`已测试`
 **参数**
 
 ```
@@ -1640,7 +1657,7 @@ GET /sms/verification_code/15989061915
 ## 获取当前用户的交易历史
 
 > `GET /bill`
-
+`已测试`
 **参数**
 
 ```
