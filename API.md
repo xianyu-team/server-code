@@ -58,6 +58,12 @@ XianYux闲余挣闲钱系统API文档
 * 登录状态: request.session['is_login']: bool
 
 
+# CSRF-token
+
+* 登录后会在cookie中设置csrf-token(string类型)
+* 对于登录后的请求, 前端需要在header中设置csrf-token, 否则会无法通过csrf验证, 返回一个403
+
+
 # 手机短信
 
 ## 向手机发送验证码
@@ -1294,7 +1300,7 @@ GET /sms/verification_code/15989061915
     "message": "用户未登录"
 ```
 
-## 新建一个问卷任务(发布者把钱给平台)
+## 新建一个问卷任务(执行这个操作, 发布者会先把钱给平台)
 `已测试`
 > `POST /task/questionnaire` 
 

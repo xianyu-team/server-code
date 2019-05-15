@@ -25,8 +25,10 @@ __notLogin__ = {
 }
 
 
-@csrf_exempt
+
 def task(request, t_type):
+    """获取任务大厅的所有任务id和共同属性"""
+
     #将t_type转为数字类型
     t_type = int(t_type)
 
@@ -114,8 +116,10 @@ def task(request, t_type):
         return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def task_delivery_detail(request, t_id):
+    """根据任务id获取拿快递和外卖的详细信息"""
+
     # 将_id转为int型
     t_id = int(t_id)
 
@@ -143,8 +147,10 @@ def task_delivery_detail(request, t_id):
         return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
 
     
-@csrf_exempt
+
 def task_questionnaire_detail(request, t_id):
+    """根据任务id获取问卷和题目的详细信息"""
+
     # 将t_id转为int型
     t_id = int(t_id)
 
@@ -187,8 +193,10 @@ def task_questionnaire_detail(request, t_id):
         return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def task_acceptance(request):
+    """接受一个跑腿的任务"""
+
     if request.session.get('is_login', None) == True:
         if request.method == 'POST':
             try:
@@ -214,8 +222,10 @@ def task_acceptance(request):
         return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def task_delivery_complishment(request):
+    """完成拿快递和外卖的任务"""
+
     if request.session.get('is_login', None) == True:
         if request.method == 'POST':
             try:
@@ -249,8 +259,10 @@ def task_delivery_complishment(request):
     else: 
         return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
 
-@csrf_exempt
+
 def task_delivery_delete(request, t_id):
+    """发布者取消拿快递和外卖的任务"""
+
      # 将t_id转为int型
     t_id = int(t_id)
 
@@ -296,8 +308,10 @@ def task_delivery_delete(request, t_id):
         return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def task_delivery(request):
+    """新建一个拿快递和外卖的任务"""
+
     if request.session.get('is_login', None):
         if request.method == 'POST':
             try:
@@ -349,8 +363,10 @@ def task_delivery(request):
         return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def task_questionnaire(request):
+    """新建一个问卷任务"""
+
     if request.session.get('is_login', None) == True:
         if request.method == 'POST':
             try:
@@ -414,8 +430,10 @@ def task_questionnaire(request):
         return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def task_questionnaire_answer(request):
+    """填写者提交问卷的答案"""
+
     if request.session.get('is_login', None) == True:
         if request.method == 'POST':
             try:
@@ -476,8 +494,10 @@ def task_questionnaire_answer(request):
 
 
 
-@csrf_exempt
+
 def task_questionnaire_answerSheet(request, q_id):
+    """填写者获取自己填写过的答卷"""
+
     # 将q_id转为int型
     q_id = int(q_id)
 
@@ -526,8 +546,10 @@ def task_questionnaire_answerSheet(request, q_id):
 
 
 
-@csrf_exempt
+
 def task_questionnaire_Statistics(request, q_id):
+    """发布者查看问卷的统计信息"""
+    
     # 将q_id转为int型
     q_id = int(q_id)
 
@@ -603,8 +625,10 @@ def task_questionnaire_Statistics(request, q_id):
 
 
 
-@csrf_exempt
+
 def task_questionnaire_closure(request):
+    """发布者截止问卷"""
+
     if request.session.get('is_login', None) == True:
         if request.method == 'PUT':
             try:
