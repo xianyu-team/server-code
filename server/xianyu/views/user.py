@@ -12,6 +12,8 @@ import time
 import hashlib
 import uuid
 import requests
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.middleware.csrf import get_token
 
 from xianyu import models
 
@@ -56,9 +58,6 @@ __notLogin__ = {
     'code': 401,
     'message': '未登录'
 }
-
-# 增加装饰器，跳过csrf的保护，前端请求就不会被forbidden
-# 或者在前端做csrf保护请求方式
 
 def _verify_phone_code_(user_phone, verification_code):
     """
@@ -143,7 +142,7 @@ def user(request):
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def user_profile(request):
     """POST为完善或修改当前用户信息，GET为获取当前用户信息"""
     try:
@@ -242,6 +241,10 @@ def user_password_session(request):
                         'user_fillln': get_user.user_fillln
                     }
                     __ok__['data'] = data
+
+                    # 在cookie中设置csrftoken
+                    get_token(request)
+
                     return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
     except Exception as exc:
         print(exc)
@@ -293,6 +296,9 @@ def user_sms_session(request):
                 }
                 __ok__['data'] = data
 
+                # 在cookie中设置csrftoken
+                get_token(request)
+
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             else:
                 return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')
@@ -301,7 +307,7 @@ def user_sms_session(request):
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def user_session(request):
     """退出登录"""
     try:
@@ -321,7 +327,7 @@ def user_session(request):
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def user_balance(request):
     """获取当前用户的余额"""
     try:
@@ -341,7 +347,7 @@ def user_balance(request):
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def user_tasks(request, t_type):
     """获得当前用户发布/领取的所有任务id和共同属性"""
     try:
@@ -383,7 +389,7 @@ def user_tasks(request, t_type):
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def user_batch_information(request):
     """根据用户/关注的人/粉丝id获取用户信息(user_id/following_id/fan_id都适用)"""
     try:
@@ -429,7 +435,7 @@ def user_batch_information(request):
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def user_following(request):
     """POST为当前用户关注其它用户，DELETE为当前用户取关其它用户"""
     try:
@@ -490,7 +496,7 @@ def user_following(request):
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def user_followings(request):
     """获取当前用户关注的所有用户的id"""
     try:
@@ -516,7 +522,7 @@ def user_followings(request):
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
 
-@csrf_exempt
+
 def user_fans(request):
     """获取当前用户的所有粉丝的id"""
     try:
