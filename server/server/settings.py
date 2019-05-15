@@ -112,6 +112,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+# 不开启时区功能
 USE_TZ = False
 
 USE_I18N = True

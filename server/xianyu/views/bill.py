@@ -24,8 +24,8 @@ __notLogin__ = {
 }
 
 
-@csrf_exempt
 def bill(request):
+    """获取当前用户的交易历史"""
     if request.session.get('is_login', None) == True:
         if request.method == 'GET':
             try:
