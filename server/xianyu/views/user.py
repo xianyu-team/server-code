@@ -181,8 +181,8 @@ def user_profile(request):
                     get_student.student_gender = parameters['student_gender']
                     get_student.save()
 
-                    data = {}
-                    __ok__['data'] = data
+                data = {}
+                __ok__['data'] = data
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             elif request.method == 'GET':
