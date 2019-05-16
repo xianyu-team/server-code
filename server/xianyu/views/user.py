@@ -116,7 +116,7 @@ def user(request):
     """用户注册"""
     try:
         if request.method == 'POST':
-            parameters = json.loads(request.body)
+            parameters = json.loads(request.body.decode('utf-8'))
 
             # 先检查手机号是否唯一
             # 获取多个对象用filter
@@ -154,7 +154,7 @@ def user_profile(request):
     try:
         if request.session.get('is_login', None):
             if request.method == 'PUT':
-                parameters = json.loads(request.body)
+                parameters = json.loads(request.body.decode('utf-8'))
 
                 # 获取单个对象用get
                 get_user = models.User.objects.get(user_id=request.session['user_id'])
@@ -229,7 +229,7 @@ def user_password_session(request):
     """密码登录"""
     try:
         if request.method == 'POST':
-            parameters = json.loads(request.body)
+            parameters = json.loads(request.body.decode('utf-8'))
 
             filter_user = models.User.objects.filter(user_phone=parameters['user_phone'])
             if filter_user.__len__() == 0:
@@ -262,7 +262,7 @@ def user_password(request):
     """找回密码-重置密码"""
     try:
         if request.method == 'PUT':
-            parameters = json.loads(request.body)
+            parameters = json.loads(request.body.decode('utf-8'))
 
             is_verified = _verify_phone_code_(parameters['user_phone'], parameters['verification_code'])
 
@@ -287,7 +287,7 @@ def user_sms_session(request):
     """用户短信登录"""
     try:
         if request.method == 'POST':
-            parameters = json.loads(request.body)
+            parameters = json.loads(request.body.decode('utf-8'))
 
             is_verified = _verify_phone_code_(parameters['user_phone'], parameters['verification_code'])
 
@@ -405,7 +405,7 @@ def user_batch_information(request):
     try:
         if request.session.get('is_login', None):
             if request.method == 'POST':
-                parameters = json.loads(request.body)
+                parameters = json.loads(request.body.decode('utf-8'))
 
                 users = []
                 for user_id_object in parameters['user_ids']:
@@ -451,7 +451,7 @@ def user_following(request):
     try:
         if request.session.get('is_login', None):
             if request.method == 'POST':
-                parameters = json.loads(request.body)
+                parameters = json.loads(request.body.decode('utf-8'))
 
                 if request.session['user_id'] == parameters['user_id']:
                     return HttpResponse(json.dumps(__followMyselfError__), content_type='application/json', charset='utf-8')
@@ -491,7 +491,7 @@ def user_following(request):
 
                     return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             elif request.method == 'DELETE':
-                parameters = json.loads(request.body)
+                parameters = json.loads(request.body.decode('utf-8'))
 
                 # 删除following表条目
                 filter_following_dict = {
