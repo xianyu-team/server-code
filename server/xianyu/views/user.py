@@ -54,10 +54,16 @@ __wrongVerification__ = {
     'message': '验证码验证失败'
 }
 
+__followMyselfError__ = {
+    'code': 400,
+    'message': '无法关注自己'
+}
+
 __notLogin__ = {
     'code': 401,
     'message': '未登录'
 }
+
 
 def _verify_phone_code_(user_phone, verification_code):
     """
@@ -181,8 +187,8 @@ def user_profile(request):
                     get_student.student_gender = parameters['student_gender']
                     get_student.save()
 
-                    data = {}
-                    __ok__['data'] = data
+                data = {}
+                __ok__['data'] = data
 
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             elif request.method == 'GET':
@@ -356,7 +362,10 @@ def user_tasks(request, t_type):
                 # 0为用户发布的，1为用户领取的
                 filter_tasks = set()
 
-                if t_type == 0:
+                # 正则匹配的参数是str，应转为int
+                t_type = int(t_type)
+
+                if t_type == 0:  
                     filter_tasks = models.PublishTask.objects.filter(user_id=request.session['user_id'])
                 elif t_type == 1:
                     filter_tasks = models.PickTask.objects.filter(user_id=request.session['user_id'])
@@ -370,11 +379,12 @@ def user_tasks(request, t_type):
                         'task_type': get_task.task_type,
                         'task_sketch': get_task.task_sketch,
                         'task_bonus': get_task.task_bonus,
-                        'task_publishDate': strftime('%Y-%m-%d %H:%M:%S', get_task.task_publishDate)
+                        'task_publishDate': get_task.task_publishDate.strftime('%Y-%m-%d %H:%M:%S')
                     })
 
                 # 给tasks对象数组按发布时间逆序排序，即最新的放在数组前面
-                tasks.sort(key=lambda task: -task['task_publishDate'])
+                tasks.sort(key=lambda task: task['task_publishDate'])
+                tasks.reverse()
 
                 data = {
                     'tasks': tasks
@@ -407,7 +417,7 @@ def user_batch_information(request):
                         'user': {
                             'user_id': get_user.user_id,
                             'user_phone': get_user.user_phone,
-                            'user_icon': get_user.user_icon,
+                            'user_icon': str(get_user.user_icon, encoding='utf-8'),
                             'user_balance': get_user.user_balance,
                             'user_fillln': get_user.user_fillln
                         },
@@ -443,31 +453,43 @@ def user_following(request):
             if request.method == 'POST':
                 parameters = json.loads(request.body)
 
-                filter_dict = {
-                    'user_id': request.session['user_id'],
-                    'following_id': parameters['user_id']
-                }
-                filter_followings = models.Following.objects.filter(**filter_dict)
+                if request.session['user_id'] == parameters['user_id']:
+                    return HttpResponse(json.dumps(__followMyselfError__), content_type='application/json', charset='utf-8')
+                else:
+                    # 操作 following 表
+                    filter_following_dict = {
+                        'user_id': request.session['user_id'],
+                        'following_id': parameters['user_id']
+                    }
+                    filter_followings = models.Following.objects.filter(**filter_following_dict)
 
-                # 若未关注则关注
-                if filter_followings.__len__ == 0:
-                    new_following = models.Following(
-                        user_id=request.session['user_id'],
-                        following_id=parameters['user_id']
-                    )
-                    new_following.save()
+                    # 若未关注则关注
+                    if filter_followings.__len__() == 0:
+                        new_following = models.Following(
+                            user_id=request.session['user_id'],
+                            following_id=parameters['user_id']
+                        )
+                        new_following.save()
 
-                    # 并且要添加到粉丝列表
-                    new_fan = models.Fan(
-                        user_id=parameters['user_id'],
-                        fan_id=request.session['user_id']
-                    )
-                    new_fan.save()
+                    # 操作 fan 表
+                    filter_fan_dict = {
+                        'user_id': parameters['user_id'],
+                        'fan_id': request.session['user_id']
+                    }
+                    filter_fans = models.Fan.objects.filter(**filter_fan_dict)
 
-                data = {}
-                __ok__['data'] = data
+                    # 若粉丝列表不存在则添加
+                    if filter_fans.__len__() == 0:
+                        new_fan = models.Fan(
+                            user_id=parameters['user_id'],
+                            fan_id=request.session['user_id']
+                        )
+                        new_fan.save()
 
-                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+                    data = {}
+                    __ok__['data'] = data
+
+                    return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             elif request.method == 'DELETE':
                 parameters = json.loads(request.body)
 
