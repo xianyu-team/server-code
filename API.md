@@ -6,6 +6,7 @@ XianYux闲余挣闲钱系统API文档
 - [API](#api)
 - [服务器IP和端口号](#%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3%E5%8F%B7)
 - [前端请求设置（注意！！！）](#%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82%E8%AE%BE%E7%BD%AE%E6%B3%A8%E6%84%8F)
+  - [前端请求路径](#%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82%E8%B7%AF%E5%BE%84)
   - [前端请求参数的数据类型](#%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
   - [前端请求header设置X-CSRFtoken](#%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82header%E8%AE%BE%E7%BD%AEx-csrftoken)
 - [手机短信](#%E6%89%8B%E6%9C%BA%E7%9F%AD%E4%BF%A1)
@@ -50,6 +51,12 @@ XianYux闲余挣闲钱系统API文档
 
 
 # 前端请求设置（注意！！！）
+
+## 前端请求路径
+
+例如，密码登录的请求路径为：http://120.77.146.251:8000/user/password/session
+
+其它API同理
 
 ## 前端请求参数的数据类型
 

@@ -200,7 +200,7 @@ def task_acceptance(request):
     if request.session.get('is_login', None) == True:
         if request.method == 'POST':
             try:
-                parameters = json.loads(request.body)
+                parameters = json.loads(request.body.decode('utf-8'))
 
                 # 接取任务列表中添加任务
                 pickTask = models.PickTask()
@@ -229,7 +229,7 @@ def task_delivery_complishment(request):
     if request.session.get('is_login', None) == True:
         if request.method == 'POST':
             try:
-                parameters = json.loads(request.body)
+                parameters = json.loads(request.body.decode('utf-8'))
 
                 #将递送设置为已完成
                 get_delivery = models.Delivery.objects.get(task_id = parameters['task_id'])
@@ -315,7 +315,7 @@ def task_delivery(request):
     if request.session.get('is_login', None):
         if request.method == 'POST':
             try:
-                parameters = json.loads(request.body)
+                parameters = json.loads(request.body.decode('utf-8'))
                 
                 #判断余额是否足够
                 get_user = models.User.objects.get(user_id = request.session.get('user_id'))
@@ -370,7 +370,7 @@ def task_questionnaire(request):
     if request.session.get('is_login', None) == True:
         if request.method == 'POST':
             try:
-                parameters = json.loads(request.body)
+                parameters = json.loads(request.body.decode('utf-8'))
 
                 #判断余额是否足够
                 get_user = models.User.objects.get(user_id = request.session.get('user_id'))
@@ -437,7 +437,7 @@ def task_questionnaire_answer(request):
     if request.session.get('is_login', None) == True:
         if request.method == 'POST':
             try:
-                parameters = json.loads(request.body)
+                parameters = json.loads(request.body.decode('utf-8'))
 
                  #将问卷份数减一
                 get_questionnaire = models.Questionnaire.objects.get(questionnaire_id = parameters['questionnaire_id']) 
@@ -632,7 +632,7 @@ def task_questionnaire_closure(request):
     if request.session.get('is_login', None) == True:
         if request.method == 'PUT':
             try:
-                parameters = json.loads(request.body)
+                parameters = json.loads(request.body.decode('utf-8'))
 
                 #问卷截止
                 get_questionnaire = models.Questionnaire.objects.get(questionnaire_id = parameters['questionnaire_id'])
