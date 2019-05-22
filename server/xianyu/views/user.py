@@ -150,7 +150,7 @@ def user(request):
 
 
 def user_profile(request):
-    """POST为完善或修改当前用户信息，GET为获取当前用户信息"""
+    """PUT为完善或修改当前用户信息，GET为获取当前用户信息"""
     try:
         if request.session.get('is_login', None):
             if request.method == 'PUT':
