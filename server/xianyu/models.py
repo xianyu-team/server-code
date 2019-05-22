@@ -16,7 +16,7 @@ class User(models.Model):
 class Student(models.Model):
     student_id = models.AutoField(primary_key=True)
     user_id = models.IntegerField()
-    student_number = models.IntegerField()
+    student_number = models.CharField(max_length=20)
     student_name = models.CharField(max_length=20)
     student_university = models.CharField(max_length=50)
     student_academy = models.CharField(max_length=50)
