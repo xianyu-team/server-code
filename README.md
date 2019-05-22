@@ -9,6 +9,16 @@
 - 安装mysql-8.0.15
 - 用`pip3 install PyMySQL`安装PyMySQL操作数据库
 - 安装mysqlclient操作数据库
+- 前往 redis 官网下载 redis-server 并安装
+- 用`pip3 install django_redis`安装 django 操作 redis 的库
+
+
+## 运行方法
+
+- 开启 mysql 数据库服务并新建一个名为 xianyu 的 database
+- 启动 redis-server 服务
+- 进入 server 文件夹执行`python manage.py runserver 0.0.0.0:8000`
+
 
 ## MySQL
 

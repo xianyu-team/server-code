@@ -1,8 +1,6 @@
 # API
 XianYux闲余挣闲钱系统API文档
 
-**（API已完成，但未进行测试）**
-
 - [API](#api)
 - [服务器IP和端口号](#%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3%E5%8F%B7)
 - [前端请求设置（注意！！！）](#%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82%E8%AE%BE%E7%BD%AE%E6%B3%A8%E6%84%8F)

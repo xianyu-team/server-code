@@ -26,7 +26,8 @@ SECRET_KEY = '@zl!1y(9q%w2+t7l87c&$t=c+gjek%idhr)-sh*#$pqc*yo5+i'
 DEBUG = True
 
 ALLOWED_HOSTS = ['120.77.146.251',
-                '127.0.0.1']
+                '127.0.0.1',
+                'localhost']
 
 
 # Application definition
@@ -131,7 +132,7 @@ STATIC_URL = '/static/'
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://127.0.0.1:6379/xianyu",
         "OPTIONS": {
            "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
