@@ -68,7 +68,7 @@ class UserTest(TestCase):
         '''创建用户'''
         pass
 
-
+    
     def test_put_user_profile(self):
         '''测试完善或修改当前用户的信息'''
         self.maxDiff = None
@@ -136,7 +136,8 @@ class UserTest(TestCase):
 
         # 检验 student 是否正确添加数据，student_id 不用验证
         self.assertEqual(student_data, get_student_data)
-
+    
+    
     def test_get_user_profile(self):
         '''测试获取当前用户的信息'''
         self.maxDiff = None
@@ -196,7 +197,7 @@ class UserTest(TestCase):
 
         # 检验 ok 状态
         self.assertEqual(response.json(), __ok__)
-
+    
 
     def test_post_user_password_session(self):
         '''测试用户密码登录'''
@@ -240,12 +241,10 @@ class UserTest(TestCase):
         # 验证OK
         self.assertEqual(response.json(), __ok__)
 
-        response = self.client.get('/user/profile', content_type='application/json')
-
-        # 利用获取用户信息，验证此时确实是已登录状态
-        self.assertNotEqual(response.json(), __notLogin__)
-
-
+        # 验证此时确实是已登录状态
+        self.assertEqual(self.client.session['is_login'], True)
+    
+    
     def test_delete_user_session(self):
         '''测试用户退出登录'''
         self.maxDiff = None
@@ -275,10 +274,8 @@ class UserTest(TestCase):
         # 验证OK
         self.assertEqual(response.json(), __ok__)
 
-        response = self.client.get('/user/profile', content_type='application/json')
-
-        # 退出登录后，利用获取用户信息再验证此时是否确实是未登录状态
-        self.assertEqual(response.json(), __notLogin__)
+        # 退出登录后，再验证此时是否确实是未登录状态
+        self.assertEqual(self.client.session.get('is_login', None), None)
 
 
     def test_get_user_balance(self):
@@ -463,7 +460,7 @@ class UserTest(TestCase):
         # 验证用户领取的任务 OK 状态
         self.assertEqual(response.json(), __ok__)
 
-
+    
     def test_post_batch_information(self):
         '''测试根据用户/关注的人/粉丝id批量获取用户信息(user_id/following_id/fan_id都适用)'''
         self.maxDiff = None
@@ -935,7 +932,7 @@ class UserTest(TestCase):
 
         # 验证 ok
         self.assertEqual(response.json(), __ok__)
-
+    
 
     def tearDown(self):
         '''测试函数执行后执行'''
@@ -953,7 +950,7 @@ class UserTest(TestCase):
         models.AnswerSheet.objects.all().delete()
         models.Bill.objects.all().delete()
         models.Delivery.objects.all().delete()
-
+    
 
 
 class TaskTest(TestCase):
