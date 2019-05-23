@@ -1377,7 +1377,7 @@ GET /sms/verification_code/15989061915
     "code": 200,
     "message": "OK",
     "data": {
-
+        "task_id": integer
     }
 }
 ```
@@ -1467,7 +1467,7 @@ GET /sms/verification_code/15989061915
     "code":       integer,    //状态码
     "message":    string      //信息
     "data": {                 //空对象
-
+        "task_id": integer
     }
 }
 ```

@@ -354,7 +354,9 @@ def task_delivery(request):
                 delivery.task_id = task.task_id
                 delivery.delivery_detail = parameters['delivery']['delivery_detail']
                 delivery.save()
-                __ok__['data'] = {}
+                __ok__['data'] = {
+                    "task_id": task.task_id
+                }
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
@@ -363,7 +365,7 @@ def task_delivery(request):
         return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
 
 
-
+@csrf_exempt
 def task_questionnaire(request):
     """新建一个问卷任务"""
 
@@ -407,7 +409,7 @@ def task_questionnaire(request):
                 #问卷列表添加问卷
                 questionnaire = models.Questionnaire()
                 questionnaire.task_id = task.task_id
-                questionnaire_number = parameters['questionnaire']['questionnaire_number']
+                questionnaire.questionnaire_number = parameters['questionnaire']['questionnaire_number']
                 questionnaire.save()
 
                 #题目列表添加题目
@@ -421,7 +423,9 @@ def task_questionnaire(request):
                     question.question_c = i['question_c']
                     question.question_d = i['question_d']
                     question.save()
-                __ok__['data'] = {}
+                __ok__['data'] = {
+                    "task_id": task.task_id
+                }
                 return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             except Exception as exc:
                 print(exc)
