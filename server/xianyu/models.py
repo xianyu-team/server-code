@@ -60,7 +60,7 @@ class PickTask(models.Model):
 #任务
 class Task(models.Model):
     task_id = models.AutoField(primary_key=True)
-    user_id = models.IntegerField()
+    user_id = models.IntegerField()                    # 任务发布者的ID
     task_type = models.SmallIntegerField(default=0)    #0代表递送, 1代表问卷
     task_sketch = models.CharField(max_length=100)
     task_bonus = models.IntegerField()
