@@ -16,7 +16,7 @@
 ## 运行方法
 
 - 开启 mysql 数据库服务并新建一个名为 xianyu 的 database
-- 启动 redis-server 服务
+- 启动 redis-server 服务，window 命令为`redis-server.exe redis.windows.conf`，ubuntu 命令为`redis-server`
 - 进入 server 文件夹执行`python manage.py runserver 0.0.0.0:8000`
 
 

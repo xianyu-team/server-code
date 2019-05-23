@@ -260,7 +260,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -321,7 +321,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 ## 用户密码登录
@@ -379,7 +379,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -515,7 +515,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -560,7 +560,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -632,7 +632,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -733,7 +733,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -785,7 +785,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -837,7 +837,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -896,7 +896,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -952,7 +952,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -1039,7 +1039,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -1099,7 +1099,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -1165,7 +1165,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -1215,7 +1215,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -1269,7 +1269,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -1320,7 +1320,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -1395,7 +1395,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 ## 新建一个问卷任务(执行这个操作, 发布者会先把钱给平台)
@@ -1492,7 +1492,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 ## 填写者提交问卷的答案(前端需要保证只填写未截止的问卷)
@@ -1563,7 +1563,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 ## 填写者获取自己填写过的答卷(包含题目和答案)
@@ -1630,7 +1630,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 ## 发布者查看问卷的统计信息
@@ -1703,7 +1703,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -1751,7 +1751,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
@@ -1810,7 +1810,7 @@ GET /sms/verification_code/15989061915
 
 ```
     "code": 401,
-    "message": "用户未登录"
+    "message": "未登录"
 ```
 
 
