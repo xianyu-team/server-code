@@ -934,6 +934,154 @@ class UserTest(TestCase):
         self.assertEqual(response.json(), __ok__)
     
 
+    def test_get_user_user_id_followings(self):
+        '''测试获取某个用户关注的所有用户的id'''
+        self.maxDiff = None
+        # 新建三个用户
+        new_user1 = models.User(
+            user_phone='15989061915',
+            user_password='123456'
+        )
+        new_user1.save()
+        new_user1_id = new_user1.user_id
+
+        new_user2 = models.User(
+            user_phone='15989060002',
+            user_password='123456',
+        )
+        new_user2.save()
+        new_user2_id = new_user2.user_id
+
+        new_user3 = models.User(
+            user_phone='15989060003',
+            user_password='123456',
+        )
+        new_user3.save()
+        new_user3_id = new_user3.user_id
+
+        new_following1 = models.Following(
+            user_id=new_user1_id,
+            following_id=new_user2_id
+        ).save()
+
+        new_following2 = models.Following(
+            user_id=new_user1_id,
+            following_id=new_user3_id
+        ).save()
+
+        new_fan1 = models.Fan(
+            user_id=new_user2_id,
+            fan_id=new_user1_id
+        ).save()
+
+        new_fan2 = models.Fan(
+            user_id=new_user3_id,
+            fan_id=new_user1_id
+        ).save()
+
+        response = self.client.get('/user/followings', content_type='application/json')
+
+        # 验证未登录
+        self.assertEqual(response.json(), __notLogin__)
+
+        post_user_session_data = {
+            "user_phone": "15989061915",
+            "user_password": "123456"
+        }
+        self.client.post('/user/password/session', data=post_user_session_data, content_type='application/json')
+
+        response = self.client.get('/user/' + new_user1_id.__str__() + '/followings', content_type='application/json')
+
+        data = {
+            'followings': [
+                {
+                    'following_id': new_user2_id
+                },
+                {
+                    'following_id': new_user3_id
+                }
+            ]
+        }
+        __ok__['data'] = data
+
+        # 验证 ok
+        self.assertEqual(response.json(), __ok__)
+
+
+    def test_get_fans(self):
+        '''测试获取某个用户的所有粉丝的id'''
+        self.maxDiff = None
+        # 新建三个用户
+        new_user1 = models.User(
+            user_phone='15989061915',
+            user_password='123456'
+        )
+        new_user1.save()
+        new_user1_id = new_user1.user_id
+
+        new_user2 = models.User(
+            user_phone='15989060002',
+            user_password='123456',
+        )
+        new_user2.save()
+        new_user2_id = new_user2.user_id
+
+        new_user3 = models.User(
+            user_phone='15989060003',
+            user_password='123456',
+        )
+        new_user3.save()
+        new_user3_id = new_user3.user_id
+
+        new_following1 = models.Following(
+            user_id=new_user2_id,
+            following_id=new_user1_id
+        ).save()
+
+        new_following2 = models.Following(
+            user_id=new_user3_id,
+            following_id=new_user1_id
+        ).save()
+
+        new_fan1 = models.Fan(
+            user_id=new_user1_id,
+            fan_id=new_user2_id
+        ).save()
+
+        new_fan2 = models.Fan(
+            user_id=new_user1_id,
+            fan_id=new_user3_id
+        ).save()
+
+        response = self.client.get('/user/fans', content_type='application/json')
+
+        # 验证未登录
+        self.assertEqual(response.json(), __notLogin__)
+
+        post_user_session_data = {
+            "user_phone": "15989061915",
+            "user_password": "123456"
+        }
+        self.client.post('/user/password/session', data=post_user_session_data, content_type='application/json')
+
+        response = self.client.get('/user/' + new_user1_id.__str__() + '/fans', content_type='application/json')
+
+        data = {
+            'fans': [
+                {
+                    'fan_id': new_user2_id
+                },
+                {
+                    'fan_id': new_user3_id
+                }
+            ]
+        }
+        __ok__['data'] = data
+
+        # 验证 ok
+        self.assertEqual(response.json(), __ok__)
+
+
     def tearDown(self):
         '''测试函数执行后执行'''
         # 每个测试函数执行后都删除所有数据

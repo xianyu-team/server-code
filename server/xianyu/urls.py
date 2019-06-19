@@ -21,6 +21,8 @@ urlpatterns = [
     path('user/following', user.user_following),
     path('user/followings', user.user_followings),
     path('user/fans', user.user_fans),
+    re_path(r'^user/(?P<u_id>\d+)/followings$', user.user_user_id_followings),
+    re_path(r'^user/(?P<u_id>\d+)/fans$', user.user_user_id_fans),
 
     re_path(r'^task/(?P<t_type>\d)$', task.task),
     re_path(r'^task/delivery/detail/(?P<t_id>\d+)$', task.task_delivery_detail),
