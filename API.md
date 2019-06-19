@@ -1,12 +1,12 @@
 # API
 XianYux闲余挣闲钱系统API文档
 
-- [API](#api)
-- [服务器IP和端口号](#%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3%E5%8F%B7)
+- [API](#API)
+- [服务器IP和端口号](#%E6%9C%8D%E5%8A%A1%E5%99%A8IP%E5%92%8C%E7%AB%AF%E5%8F%A3%E5%8F%B7)
 - [前端请求设置（注意！！！）](#%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82%E8%AE%BE%E7%BD%AE%E6%B3%A8%E6%84%8F)
   - [前端请求路径](#%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82%E8%B7%AF%E5%BE%84)
   - [前端请求参数的数据类型](#%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
-  - [前端请求header设置X-CSRFtoken](#%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82header%E8%AE%BE%E7%BD%AEx-csrftoken)
+  - [前端请求 header 设置 csrftoken 和 sessionid](#%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82-header-%E8%AE%BE%E7%BD%AE-csrftoken-%E5%92%8C-sessionid)
 - [手机短信](#%E6%89%8B%E6%9C%BA%E7%9F%AD%E4%BF%A1)
   - [向手机发送验证码](#%E5%90%91%E6%89%8B%E6%9C%BA%E5%8F%91%E9%80%81%E9%AA%8C%E8%AF%81%E7%A0%81)
   - [验证手机验证码](#%E9%AA%8C%E8%AF%81%E6%89%8B%E6%9C%BA%E9%AA%8C%E8%AF%81%E7%A0%81)
@@ -25,8 +25,10 @@ XianYux闲余挣闲钱系统API文档
   - [当前用户取关其它用户](#%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8F%96%E5%85%B3%E5%85%B6%E5%AE%83%E7%94%A8%E6%88%B7)
   - [获取当前用户关注的所有用户的id](#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%85%B3%E6%B3%A8%E7%9A%84%E6%89%80%E6%9C%89%E7%94%A8%E6%88%B7%E7%9A%84id)
   - [获取当前用户的所有粉丝的id](#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E7%9A%84%E6%89%80%E6%9C%89%E7%B2%89%E4%B8%9D%E7%9A%84id)
+  - [获取某个用户关注的所有用户的id](#%E8%8E%B7%E5%8F%96%E6%9F%90%E4%B8%AA%E7%94%A8%E6%88%B7%E5%85%B3%E6%B3%A8%E7%9A%84%E6%89%80%E6%9C%89%E7%94%A8%E6%88%B7%E7%9A%84id)
+  - [获取某个用户的所有粉丝的id](#%E8%8E%B7%E5%8F%96%E6%9F%90%E4%B8%AA%E7%94%A8%E6%88%B7%E7%9A%84%E6%89%80%E6%9C%89%E7%B2%89%E4%B8%9D%E7%9A%84id)
 - [任务](#%E4%BB%BB%E5%8A%A1)
-  - [关于任务API（注意事项）](#%E5%85%B3%E4%BA%8E%E4%BB%BB%E5%8A%A1api%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
+  - [关于任务API（注意事项）](#%E5%85%B3%E4%BA%8E%E4%BB%BB%E5%8A%A1API%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
   - [获取任务大厅的所有任务id和共同属性](#%E8%8E%B7%E5%8F%96%E4%BB%BB%E5%8A%A1%E5%A4%A7%E5%8E%85%E7%9A%84%E6%89%80%E6%9C%89%E4%BB%BB%E5%8A%A1id%E5%92%8C%E5%85%B1%E5%90%8C%E5%B1%9E%E6%80%A7)
   - [根据任务id获取拿快递和外卖的详细信息](#%E6%A0%B9%E6%8D%AE%E4%BB%BB%E5%8A%A1id%E8%8E%B7%E5%8F%96%E6%8B%BF%E5%BF%AB%E9%80%92%E5%92%8C%E5%A4%96%E5%8D%96%E7%9A%84%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF)
   - [根据任务id获取问卷和题目的详细信息](#%E6%A0%B9%E6%8D%AE%E4%BB%BB%E5%8A%A1id%E8%8E%B7%E5%8F%96%E9%97%AE%E5%8D%B7%E5%92%8C%E9%A2%98%E7%9B%AE%E7%9A%84%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF)
@@ -60,14 +62,19 @@ XianYux闲余挣闲钱系统API文档
 
 前端的请求参数为`json`类型，在请求的header中设置为`"Content-Type": "application/json"`
 
-## 前端请求header设置X-CSRFtoken
+## 前端请求 header 设置 csrftoken 和 sessionid
 
-登录后，后端会在cookie中设置csrftoken(string类型)并返回给前端
+登录后，后端会在 Cookie 中设置 csrftoken 和 sessionid 并返回给前端
 
-对于登录后的请求, 前端需要获取cookie，然后在cookie中获取csrftoken字段的值，类似于`csrf = cookies.get("csrftoken")`
+对于登录后的请求, 前端需要获取 Cookie 中 csrftoken 和 sessionid 字段的值，如下图：
 
-获取了csrftoken，就在header中设置X-CSRFtoken字段：`"X-CSRFtoken": csrf`，若csrf为空，就设置为：`"X-CSRFtoken": ""`，否则会无法通过csrf验证, 返回一个403
+![](https://gitee.com/watchcat2k/pictures_base/raw/master/2019-06/2019-06-18-2.png)
 
+然后在请求的 header 中设置 Cookie 字段，内容为 csrftoken 和 sessionid 的值，用";"分隔，如下图：
+
+![](https://gitee.com/watchcat2k/pictures_base/raw/master/2019-06/2019-06-18-1.png)
+
+否则会出现登录后会话不统一或者 csrftoken 验证不通过的情况。 
 
 # 手机短信
 
@@ -955,6 +962,130 @@ GET /sms/verification_code/15989061915
     "message": "未登录"
 ```
 
+
+## 获取某个用户关注的所有用户的id
+
+> `GET /user/{user_id}/followings`
+
+**参数**
+```
+把 url 中的 {user_id} 替换成某个用户的用户 id
+```
+
+**参数示例**
+```
+GET /user/1/followings
+```
+
+**返回值**
+
+```
+{
+    "code":                        integer,    //状态码
+    "message":                     string,     //信息
+    "data": {
+        "followings": [
+            {
+                "following_id":    integer     //元素是某个用户关注的用户的id
+            }
+        ]
+    }
+}
+```
+
+**返回示例**
+
+- 200
+```
+{
+    "code": 200,
+    "message": "OK",
+    "data": {
+        "followings": [
+            {
+                "following_id": 5    
+            }
+            {
+                "following_id": 12    
+            }
+            ...
+        ]
+    }
+}
+```
+- 400
+```
+    "code": 400,
+    "message": "服务器发生错误"
+```
+
+- 401
+
+```
+    "code": 401,
+    "message": "未登录"
+```
+
+
+## 获取某个用户的所有粉丝的id 
+> `GET /user/{user_id}/fans`
+
+**参数**
+```
+把 url 中的 {user_id} 替换成某个用户的用户 id
+```
+
+**参数示例**
+```
+GET /user/1/fans
+```
+
+**返回值**
+```
+{
+    "code":                  integer,    //状态码
+    "message":               string,     //信息
+    "data": {
+        "fans": [
+            {
+                "fan_id":    integer     //元素是某个用户的粉丝的id
+            }
+        ]
+    }
+}
+```
+
+**返回示例**
+- 200
+```
+{
+    "code": 200,
+    "message": "OK",
+    "data": {
+        "fans": [
+            {
+                "fan_id": 5    
+            }
+            {
+                "fan_id": 12    
+            }
+            ...
+        ]
+    }
+}
+```
+- 400
+```
+    "code": 400,
+    "message": "服务器发生错误"
+```
+
+- 401
+
+```
+    "code": 401,
+    "message": "未登录"
+```
 
 
 # 任务

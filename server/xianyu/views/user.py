@@ -568,3 +568,55 @@ def user_fans(request):
     except Exception as exc:
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+
+
+
+def user_user_id_followings(request, u_id):
+    """获取某个用户关注的所有用户的id"""
+    try:
+        if request.session.get('is_login', None):
+            if request.method == 'GET':
+                followings = []
+                filter_followings = models.Following.objects.filter(user_id=u_id)
+                for filter_following in filter_followings:
+                    followings.append({
+                        'following_id': filter_following.following_id
+                    })
+
+                data = {
+                    'followings': followings
+                }
+                __ok__['data'] = data
+
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+        else:
+            return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
+    except Exception as exc:
+        print(exc)
+        return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+
+
+
+def user_user_id_fans(request, u_id):
+    """获取某个用户的所有粉丝的id"""
+    try:
+        if request.session.get('is_login', None):
+            if request.method == 'GET':
+                fans = []
+                filter_fans = models.Fan.objects.filter(user_id=u_id)
+                for filter_fan in filter_fans:
+                    fans.append({
+                        'fan_id': filter_fan.fan_id
+                    })
+
+                data = {
+                    'fans': fans
+                }
+                __ok__['data'] = data
+
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+        else:
+            return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
+    except Exception as exc:
+        print(exc)
+        return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
