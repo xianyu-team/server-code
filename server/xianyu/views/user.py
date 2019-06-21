@@ -65,6 +65,7 @@ __notLogin__ = {
 }
 
 
+'''
 def _verify_phone_code_(user_phone, verification_code):
     """
     此函数为私有函数，作用是验证手机验证码，传入参数为手机号和验证码，返回值为bool值，true为成功验证
@@ -109,6 +110,23 @@ def _verify_phone_code_(user_phone, verification_code):
         return True
     else:
         return False
+'''
+
+
+def _verify_phone_code_(request, user_phone, verification_code):
+    """
+    此函数为私有函数，没有用第三方短信服务，后端模拟验证手机验证码，传入参数为手机号和验证码，返回值为bool值，true为成功验证
+    """
+    current_time = time.time()
+    get_verification_code_time = request.session.get(user_phone + '_get_verification_code_time', 0)
+
+    if current_time - get_verification_code_time < 600:
+        if verification_code == request.session.get(user_phone + '_verification_code', '-1'):
+            return True
+        else:
+            return False
+    else:
+        return False
 
 
 @csrf_exempt
@@ -122,7 +140,7 @@ def user(request):
             # 获取多个对象用filter
             filter_user = models.User.objects.filter(user_phone=parameters['user_phone'])
             if filter_user.__len__() == 0:
-                is_verified = _verify_phone_code_(parameters['user_phone'], parameters['verification_code'])
+                is_verified = _verify_phone_code_(request, parameters['user_phone'], parameters['verification_code'])
 
                 if is_verified:
                     new_user = models.User(
@@ -264,7 +282,7 @@ def user_password(request):
         if request.method == 'PUT':
             parameters = json.loads(request.body.decode('utf-8'))
 
-            is_verified = _verify_phone_code_(parameters['user_phone'], parameters['verification_code'])
+            is_verified = _verify_phone_code_(request, parameters['user_phone'], parameters['verification_code'])
 
             if is_verified:
                 get_user = models.User.objects.get(user_phone=parameters['user_phone'])
@@ -289,7 +307,7 @@ def user_sms_session(request):
         if request.method == 'POST':
             parameters = json.loads(request.body.decode('utf-8'))
 
-            is_verified = _verify_phone_code_(parameters['user_phone'], parameters['verification_code'])
+            is_verified = _verify_phone_code_(request, parameters['user_phone'], parameters['verification_code'])
 
             if is_verified:
                 get_user = models.User.objects.get(user_phone=parameters['user_phone'])

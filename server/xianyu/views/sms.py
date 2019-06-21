@@ -10,6 +10,8 @@ import time
 import hashlib
 import uuid
 import requests
+import string
+import random
 
 from xianyu import models
 
@@ -57,21 +59,57 @@ __notLogin__ = {
 
 # 增加装饰器，跳过csrf的保护，前端请求就不会被forbidden
 # 或者在前端做csrf保护请求方式
-
-
 @csrf_exempt
 def sms_verification_code(request, user_phone):
-    """向手机发送验证码"""
+    """没有用第三方短信服务，后端模拟向手机发送验证码"""
     try:
-        __notavailable__ = {
-            'code': 400,
-            'message': "短信验证码服务暂时关闭"
-        }
+        if request.method == 'GET':
+            # 产生 4 位随机数
+            seeds = string.digits
+            random_str = []
+            for i in range(4):
+                random_str.append(random.choice(seeds))
+            verification_code = "".join(random_str)
 
-        return HttpResponse(json.dumps(__notavailable__), content_type='application/json', charset='utf-8')
+            request.session[user_phone + '_verification_code'] = verification_code
+            request.session[user_phone + '_get_verification_code_time'] = time.time()
+
+            __ok__['data'] = {
+                'verification_code': verification_code
+            }
+            return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
     except Exception as exc:
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+
+
+@csrf_exempt
+def sms_verification(request):
+    """没有用第三方短信服务，后端模拟验证手机验证码"""
+    try:
+        if request.method == 'POST':
+            parameters = json.loads(request.body.decode('utf-8'))
+
+            user_phone = parameters['user_phone']
+            verification_code = parameters['verification_code']
+
+            current_time = time.time()
+            get_verification_code_time = request.session.get(user_phone + '_get_verification_code_time', 0)
+
+            if current_time - get_verification_code_time < 600:
+                if verification_code == request.session.get(user_phone + '_verification_code', '-1'):
+                    data = {}
+                    __ok__['data'] = data
+
+                    return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+                else:
+                    return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')
+            else:
+                return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')
+    except Exception as exc:
+        print(exc)
+        return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+
 
 '''
 @csrf_exempt
@@ -118,6 +156,7 @@ def sms_verification_code(request, user_phone):
 '''
 
 
+'''
 @csrf_exempt
 def sms_verification(request):
     """验证手机验证码"""
@@ -161,3 +200,4 @@ def sms_verification(request):
     except Exception as exc:
         print(exc)
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+'''
