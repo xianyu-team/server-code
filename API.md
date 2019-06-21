@@ -76,7 +76,11 @@ XianYux闲余挣闲钱系统API文档
 
 否则会出现登录后会话不统一或者 csrftoken 验证不通过的情况。 
 
+**由于没有使用第三方的短信验证码服务，只能在后端模拟短信验证过程。所以涉及短信验证码的部分要在 header 里设置 sessionid。为了方便，最好前端的请求 header 全部都设置 sessionid 和 csrftoken，即使这两项值为空**
+
 # 手机短信
+
+**由于没有使用第三方的短信验证码服务，我们使用后端模拟短信验证码的发送和验证过程，生成的验证码将会作为数据直接返回给前端。**
 
 ## 向手机发送验证码
 > `GET /sms/verification_code/{user_phone}`
@@ -95,9 +99,11 @@ GET /sms/verification_code/15989061915
 
 ```
 {
-    "code":       integer,    //状态码
-    "message":    string,     //信息
-    "data": {}                //数据，这里为空对象
+    "code":                     integer,    //状态码
+    "message":                  string,     //信息
+    "data": {
+        "verification_code":    string      //验证码
+    }        
 }
 ```
 
@@ -107,7 +113,9 @@ GET /sms/verification_code/15989061915
 {
     "code": 200,
     "message": "OK",
-    "data": {}
+    "data": {
+        "verification_code": "5482"
+    }
 }
 ```
 - 400
