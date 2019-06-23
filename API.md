@@ -414,8 +414,8 @@ GET /sms/verification_code/15989061915
 **参数示例**
 ```
 {
-    "user_phone": "15989061915"
-    "user_password": "123456"
+    "user_phone": "15989061915",
+    "user_password": "123456",
     "verification_code": "5489"
 }
 ```
