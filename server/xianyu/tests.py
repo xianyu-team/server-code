@@ -7,7 +7,8 @@ from django.test import TestCase
 from xianyu import models
 from time import strftime, localtime
 import time
-
+import string
+import random
 
 # 注意data字段，因为__ok__是全局变量，所以每次返回时都要对data进行赋值，即使赋值的是个空对象，以覆盖原来的data值
 __ok__ = {
@@ -57,6 +58,85 @@ __notLogin__ = {
 }
 
 
+class SmsTest(TestCase):
+    '''测试短信API'''
+    def setUp(self):
+        '''测试函数执行前执行'''
+        pass
+
+
+    def test_get_sms_verification_code(self):
+        '''测试向手机发送验证码'''
+        self.maxDiff = None
+
+        user_phone = '15989061915'
+        response = self.client.get('/sms/verification_code/' + user_phone, content_type='application/json')
+
+        code = self.client.session[user_phone + '_verification_code']
+
+        __ok__['data'] = {
+            "verification_code": code
+        }
+
+        # 检验成功获取验证码
+        self.assertEqual(response.json(), __ok__)
+
+
+    '''
+    def test_get_sms_verification_code(self):
+        测试验证手机验证码
+        self.maxDiff = None
+
+        # 产生 4 位随机数
+        seeds = string.digits
+        random_str = []
+        for i in range(4):
+            random_str.append(random.choice(seeds))
+        verification_code = "".join(random_str)
+
+        user_phone = '15989061915'
+
+        self.client.session[user_phone + '_verification_code'] = verification_code
+        self.client.session[user_phone + '_get_verification_code_time'] = time.time()
+        
+        post_data = {
+            "user_phone": user_phone,
+            "verification_code": verification_code
+        }
+        
+        response = self.client.post('/sms/verification', data=post_data, content_type='application/json')
+        # 检验成功验证验证码
+        print('--------------------------------------')
+        print(self.client.session.get(user_phone + '_verification_code', 0))
+        print(verification_code)
+        print('--------------------------------------')
+        __ok__['data'] = {}
+        self.assertEqual(response.json(), __ok__)
+
+        post_data = {
+            "user_phone": user_phone,
+            "verification_code": verification_code + '1'
+        }
+        response = self.client.post('/sms/verification', data=post_data, content_type='application/json')
+        # 检验不成功验证验证码
+        self.assertEqual(response.json(), __wrongVerification__)
+
+        post_data = {
+            "user_phone": user_phone + '1',
+            "verification_code": verification_code
+        }
+        response = self.client.post('/sms/verification', data=post_data, content_type='application/json')
+        # 检验不成功验证验证码
+        self.assertEqual(response.json(), __wrongVerification__)
+    '''
+
+
+    def tearDown(self):
+        '''测试函数执行后执行'''
+        # 每个测试函数执行后都删除所有数据
+        pass
+    
+
 class UserTest(TestCase):
     '''测试用户API'''
     def setUp(self):
@@ -68,7 +148,7 @@ class UserTest(TestCase):
         '''创建用户'''
         pass
 
-    
+
     def test_put_user_profile(self):
         '''测试完善或修改当前用户的信息'''
         self.maxDiff = None
