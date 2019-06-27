@@ -285,14 +285,18 @@ def user_password(request):
             is_verified = _verify_phone_code_(request, parameters['user_phone'], parameters['verification_code'])
 
             if is_verified:
-                get_user = models.User.objects.get(user_phone=parameters['user_phone'])
-                get_user.user_password = parameters['user_password']
-                get_user.save()
+                filter_user = models.User.objects.filter(user_phone=parameters['user_phone'])
+                if filter_user.__len__() == 0:
+                    return HttpResponse(json.dumps(__notExistUser__), content_type='application/json', charset='utf-8')
+                else:
+                    get_user = models.User.objects.get(user_phone=parameters['user_phone'])
+                    get_user.user_password = parameters['user_password']
+                    get_user.save()
 
-                data = {}
-                __ok__['data'] = data
+                    data = {}
+                    __ok__['data'] = data
 
-                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+                    return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             else:
                 return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')
     except Exception as exc:
@@ -310,20 +314,24 @@ def user_sms_session(request):
             is_verified = _verify_phone_code_(request, parameters['user_phone'], parameters['verification_code'])
 
             if is_verified:
-                get_user = models.User.objects.get(user_phone=parameters['user_phone'])
+                filter_user = models.User.objects.filter(user_phone=parameters['user_phone'])
+                if filter_user.__len__() == 0:
+                    return HttpResponse(json.dumps(__notExistUser__), content_type='application/json', charset='utf-8')
+                else:
+                    get_user = models.User.objects.get(user_phone=parameters['user_phone'])
 
-                request.session['user_id'] = get_user.user_id
-                request.session['is_login'] = True
+                    request.session['user_id'] = get_user.user_id
+                    request.session['is_login'] = True
 
-                data = {
-                    'user_fillln': get_user.user_fillln
-                }
-                __ok__['data'] = data
+                    data = {
+                        'user_fillln': get_user.user_fillln
+                    }
+                    __ok__['data'] = data
 
-                # 在cookie中设置csrftoken
-                get_token(request)
+                    # 在cookie中设置csrftoken
+                    get_token(request)
 
-                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+                    return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
             else:
                 return HttpResponse(json.dumps(__wrongVerification__), content_type='application/json', charset='utf-8')
     except Exception as exc:
