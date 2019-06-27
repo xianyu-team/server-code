@@ -425,6 +425,51 @@ def user_tasks(request, t_type):
         return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
 
 
+def user_user_id_tasks(request, u_id, t_type):
+    """获得某个用户发布/领取的所有任务id和共同属性"""
+    try:
+        if request.session.get('is_login', None):
+            if request.method == 'GET':
+                # 0为用户发布的，1为用户领取的
+                filter_tasks = set()
+
+                # 正则匹配的参数是str，应转为int
+                t_type = int(t_type)
+                u_id = int(u_id)
+
+                if t_type == 0:  
+                    filter_tasks = models.PublishTask.objects.filter(user_id=u_id)
+                elif t_type == 1:
+                    filter_tasks = models.PickTask.objects.filter(user_id=u_id)
+
+                tasks = []
+                for filter_task in filter_tasks:
+                    get_task = models.Task.objects.get(task_id=filter_task.task_id)
+                    tasks.append({
+                        'task_id': get_task.task_id,
+                        'user_id': get_task.user_id,
+                        'task_type': get_task.task_type,
+                        'task_sketch': get_task.task_sketch,
+                        'task_bonus': get_task.task_bonus,
+                        'task_publishDate': get_task.task_publishDate.strftime('%Y-%m-%d %H:%M:%S')
+                    })
+
+                # 给tasks对象数组按发布时间逆序排序，即最新的放在数组前面
+                tasks.sort(key=lambda task: task['task_publishDate'])
+                tasks.reverse()
+
+                data = {
+                    'tasks': tasks
+                }
+                __ok__['data'] = data
+
+                return HttpResponse(json.dumps(__ok__), content_type='application/json', charset='utf-8')
+        else:
+            return HttpResponse(json.dumps(__notLogin__), content_type='application/json', charset='utf-8')
+    except Exception as exc:
+        print(exc)
+        return HttpResponse(json.dumps(__error__), content_type='application/json', charset='utf-8')
+
 
 def user_batch_information(request):
     """根据用户/关注的人/粉丝id获取用户信息(user_id/following_id/fan_id都适用)"""

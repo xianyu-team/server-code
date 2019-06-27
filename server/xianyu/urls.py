@@ -17,6 +17,7 @@ urlpatterns = [
     path('user/session', user.user_session),
     path('user/balance', user.user_balance),
     re_path(r'^user/tasks/(?P<t_type>\d)$', user.user_tasks),
+    re_path(r'^user/(?P<u_id>\d+)/tasks/(?P<t_type>\d)$', user.user_user_id_tasks),
     path('user/batch/information', user.user_batch_information),
     path('user/following', user.user_following),
     path('user/followings', user.user_followings),

@@ -20,6 +20,7 @@ XianYux闲余挣闲钱系统API文档
   - [用户退出登录](#%E7%94%A8%E6%88%B7%E9%80%80%E5%87%BA%E7%99%BB%E5%BD%95)
   - [获取当前用户的余额](#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E7%9A%84%E4%BD%99%E9%A2%9D)
   - [获得当前用户发布/领取的所有任务id和共同属性](#%E8%8E%B7%E5%BE%97%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8F%91%E5%B8%83%E9%A2%86%E5%8F%96%E7%9A%84%E6%89%80%E6%9C%89%E4%BB%BB%E5%8A%A1id%E5%92%8C%E5%85%B1%E5%90%8C%E5%B1%9E%E6%80%A7)
+  - [获得某个用户发布/领取的所有任务id和共同属性](#%E8%8E%B7%E5%BE%97%E6%9F%90%E4%B8%AA%E7%94%A8%E6%88%B7%E5%8F%91%E5%B8%83%E9%A2%86%E5%8F%96%E7%9A%84%E6%89%80%E6%9C%89%E4%BB%BB%E5%8A%A1id%E5%92%8C%E5%85%B1%E5%90%8C%E5%B1%9E%E6%80%A7)
   - [根据用户/关注的人/粉丝id批量获取用户信息(user_id/following_id/fan_id都适用)](#%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%E5%85%B3%E6%B3%A8%E7%9A%84%E4%BA%BA%E7%B2%89%E4%B8%9Did%E6%89%B9%E9%87%8F%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AFuseridfollowingidfanid%E9%83%BD%E9%80%82%E7%94%A8)
   - [当前用户关注其它用户](#%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%85%B3%E6%B3%A8%E5%85%B6%E5%AE%83%E7%94%A8%E6%88%B7)
   - [当前用户取关其它用户](#%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8F%96%E5%85%B3%E5%85%B6%E5%AE%83%E7%94%A8%E6%88%B7)
@@ -595,6 +596,81 @@ GET /sms/verification_code/15989061915
 ```
 {
     GET /user/tasks/1
+}
+```
+
+**返回值**
+
+```
+// 返回的结果按发布时间从大到小排序，即最新发布的任务存储在tasks数组前面
+
+{
+    "code":                            integer,    
+    "message":                         string,
+    "data": {
+        "tasks": [
+            {
+                "task_id":             integer,    //任务id
+                "user_id":             integer,    //发布者id
+                "task_type":           integer,    //任务类型，0为拿快递和外卖，1为填问卷
+                "task_sketch":         string,     //任务简述
+                "task_bonus":          integer,    //任务酬劳
+                "task_publishDate":    string      //发布日期
+            }
+        ]
+    }
+}
+```
+
+**返回示例**
+
+- 200
+```
+{
+    "code": 200,    
+    "message": "OK",
+    "data": {
+        "tasks": [
+            {
+                //省略...
+            }
+        ]
+    }
+}
+```
+- 400
+```
+    "code": 400,
+    "message": "服务器发生错误"
+```
+
+- 401
+
+```
+    "code": 401,
+    "message": "未登录"
+```
+
+
+
+
+## 获得某个用户发布/领取的所有任务id和共同属性
+
+> `GET /user/{u_id}/tasks/{t_type}`
+
+**参数**	
+
+```
+{
+    把 url 中的 {u_id} 替换成用户 id
+    把 url 中的 {t_type} 替换成 0 或 1 ，0为用户发布的，1为用户领取的
+}
+```
+
+**参数示例**
+```
+{
+    GET /user/1/tasks/1
 }
 ```
 
